@@ -3,19 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: h4ns <h4ns@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 09:43:58 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/22 13:31:23 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/01/23 20:31:33 by h4ns             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
 
+void BitcoinExchange::addData(t_data d)
+{
+	this->in_data.push_back(d);
+}
+
+void BitcoinExchange::printContainer() const
+{
+	std::cout << "Printing Container..." << std::endl;
+	for(auto &it: this->in_data)
+		std::cout << it.year << " " << it.value << std::endl;
+}
+
 void validateInput(char *str)
 {
 	std::ifstream file(str);
 	std::string line;
+	BitcoinExchange btc;
 
 	if(file.is_open())
 	{
@@ -24,13 +37,14 @@ void validateInput(char *str)
 		while (std::getline(file, line))
 		{
 			std::cout << line << std::endl;
-			parseLine(line.data());
+			btc.addData(parseLine(line.data()));
 		}
 		std::cout << "---" << std::endl;
 	}
 	else
 		throw std::runtime_error("Could not access file");
 	file.close();
+	btc.printContainer();
 }
 
 
@@ -39,8 +53,9 @@ void validateInput(char *str)
 
 //isolate values => check if valid => if yes, store them as is => if not store error value(-1) and message in map
 
-void parseLine(char *str) 
+t_data parseLine(char *str) 
 {
+	t_data d;
 	std::regex line(R"(\s*(\d+-\d+-\d+)\s*\|\s*((\+?|-?)(\d*\.?\d*))\s*)");
 	std::regex date(R"((\d{4})-(\d{2})-(\d{2}))");
 	std::regex value(R"((\+?|-?)(\d+)|(\d*\.\d+)|(\d+\.\d*))");
@@ -49,48 +64,51 @@ void parseLine(char *str)
 	std::cmatch dm;
 	std::cmatch vm;
 
-
 	if (std::regex_match(str, lm, line))
 	{
+		d.input = lm.str(1) + lm.str(2);
 		std::cout << "Match: " << lm.str(2) << std::endl;
 		if (std::regex_match(lm.str(1).data(), dm, date))
-			checkDate(dm.str(1), dm.str(2), dm.str(3));
+			d = checkDate(dm.str(1), dm.str(2), dm.str(3), d);
 		else
 			std::cerr << "Bad date format" << std::endl;
 		if (std::regex_match(lm.str(2).data(), vm, value))
-			checkValue(vm.str());
+			checkValue(vm.str(), d);
 		else
 			std::cerr << "Invalid btc ammount format (only int or double)" << std::endl;
 	}
 	else
 		std::cerr << "Invalid input type. Expected: 'YYYY-MM-DD | btc ammount (int or double)'" << std::endl;
 
+	return d;
 }
 
-void checkDate(std::string year_str, std::string month_str, std::string day_str)
+t_data checkDate(std::string year_str, std::string month_str, std::string day_str, t_data d)
 {
-	int year = std::stoi(year_str);
-	int month = std::stoi(month_str);
-	int day = std::stoi(day_str);
+	d.year = std::stoi(year_str);
+	d.month = std::stoi(month_str);
+	d.day = std::stoi(day_str);
 
-	if (year < 2009 || year > 2022)
+	if (d.year < 2009 || d.year > 2022)
 		std::cerr << "Year outside of database (2009 - 2022)" << std::endl;
-	if (month < 1 || month > 12)
+	if (d.month < 1 || d.month > 12)
 		std::cerr << "Month out of range (1 - 12)" << std::endl;
-	if (day < 1 || day > 31)
+	if (d.day < 1 || d.day > 31)
 		std::cerr << "Day out of range (1 - 31)" << std::endl;
 
-	std::cout << year << " " << month << " " << day << std::endl;
+	std::cout << d.year << " " << d.month << " " << d.day << std::endl;
+
+	return d;
 }
 
-void checkValue(std::string value_str)
+void checkValue(std::string value_str, t_data &d)
 {
-	double value = std::stod(value_str);
+	d.value = std::stod(value_str);
 
-	if (value > std::numeric_limits<int>::max())
+	if (d.value > std::numeric_limits<int>::max())
 		std::cerr << "Too large number" << std::endl;
-	else if (value < 0.0)
+	else if (d.value < 0.0)
 		std::cerr << "Not a positive ammount" << std::endl;
 	else
-		std::cout << std::fixed << value << std::endl; //what is the right precision / display-type here?
+		std::cout << std::fixed << d.value << std::endl; //what is the right precision / display-type here?
 }
