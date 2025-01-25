@@ -3,49 +3,64 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: h4ns <h4ns@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 10:07:40 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/23 20:26:19 by h4ns             ###   ########.fr       */
+/*   Updated: 2025/01/25 08:19:44 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include <iostream>
-#include <regex>
 #include <fstream>
-#include <string>
+#include <iostream>
 #include <limits>
+#include <regex>
+#include <string>
 #include <vector>
 
-typedef struct s_data
+class inData
 {
-    int year;
-    int month;
-    int day;
-    double value;
+  private:
+	int year = 0;
+	int month = 0;
+	int day = 0;
+	double value = 0;
 
-    bool invalid;
+	bool invalid = false;
 
-    std::string input;
-    std::string msg;
+	std::string input;
+	std::string msg;
 
-} t_data;
+  public:
+	inData() = default;
+	inData(const inData &other) = default;
+	inData &operator=(const inData &other) = default;
+	~inData() = default;
 
-class BitcoinExchange
-{
-    private:
-    std::vector<t_data> in_data;
+	//setters
+	void setDate(int year, int month, int day);
+	void setValue(double value);
+	void setError(std::string msg);
 
+	//getters
+	void getValues(void) const;
 
-    public:
-    void addData(t_data d);
-    void printContainer(void) const;
+	//checks
+	void	checkDate(std::string year_str, std::string month_str, std::string day_str);
+	void	checkValue(std::string value_str);
 
 };
 
-void validateInput(char *str);
-t_data parseLine(char *str);
-t_data checkDate(std::string year_str, std::string month_str, std::string day_str, t_data d);
-void checkValue(std::string value_str, t_data &d);
+class BitcoinExchange
+{
+  private:
+	std::vector<inData> in_data;
+
+  public:
+	void addData(inData d);
+	void printContainer(void) const;
+	void parseLine(char *str);
+};
+
+void	validateInput(char *str);

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: h4ns <h4ns@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 09:43:58 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/23 20:31:33 by h4ns             ###   ########.fr       */
+/*   Updated: 2025/01/25 08:25:34 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
 
-void BitcoinExchange::addData(t_data d)
+void BitcoinExchange::addData(inData d)
 {
 	this->in_data.push_back(d);
 }
@@ -21,7 +21,7 @@ void BitcoinExchange::printContainer() const
 {
 	std::cout << "Printing Container..." << std::endl;
 	for(auto &it: this->in_data)
-		std::cout << it.year << " " << it.value << std::endl;
+		it.getValues();
 }
 
 void validateInput(char *str)
@@ -37,7 +37,7 @@ void validateInput(char *str)
 		while (std::getline(file, line))
 		{
 			std::cout << line << std::endl;
-			btc.addData(parseLine(line.data()));
+			btc.parseLine(line.data());
 		}
 		std::cout << "---" << std::endl;
 	}
@@ -47,15 +47,14 @@ void validateInput(char *str)
 	btc.printContainer();
 }
 
-
 //seperate date into parts and check if valid
 //maybe do multiple parsing runthroughs first seperating the vaules => checking if valid => place in container
 
 //isolate values => check if valid => if yes, store them as is => if not store error value(-1) and message in map
 
-t_data parseLine(char *str) 
+void BitcoinExchange::parseLine(char *str)
 {
-	t_data d;
+	inData d;
 	std::regex line(R"(\s*(\d+-\d+-\d+)\s*\|\s*((\+?|-?)(\d*\.?\d*))\s*)");
 	std::regex date(R"((\d{4})-(\d{2})-(\d{2}))");
 	std::regex value(R"((\+?|-?)(\d+)|(\d*\.\d+)|(\d+\.\d*))");
@@ -66,49 +65,65 @@ t_data parseLine(char *str)
 
 	if (std::regex_match(str, lm, line))
 	{
-		d.input = lm.str(1) + lm.str(2);
 		std::cout << "Match: " << lm.str(2) << std::endl;
 		if (std::regex_match(lm.str(1).data(), dm, date))
-			d = checkDate(dm.str(1), dm.str(2), dm.str(3), d);
+			d.checkDate(dm.str(1), dm.str(2), dm.str(3));
 		else
 			std::cerr << "Bad date format" << std::endl;
 		if (std::regex_match(lm.str(2).data(), vm, value))
-			checkValue(vm.str(), d);
+			d.checkValue(vm.str());
 		else
 			std::cerr << "Invalid btc ammount format (only int or double)" << std::endl;
 	}
 	else
 		std::cerr << "Invalid input type. Expected: 'YYYY-MM-DD | btc ammount (int or double)'" << std::endl;
 
-	return d;
+	addData(d);
 }
 
-t_data checkDate(std::string year_str, std::string month_str, std::string day_str, t_data d)
-{
-	d.year = std::stoi(year_str);
-	d.month = std::stoi(month_str);
-	d.day = std::stoi(day_str);
+//Checking and setting numeric values
 
-	if (d.year < 2009 || d.year > 2022)
+void inData::checkDate(std::string year_str, std::string month_str, std::string day_str)
+{
+	int year = std::stoi(year_str);
+	int month = std::stoi(month_str);
+	int day = std::stoi(day_str);
+
+	if (year < 2009 || year > 2022)
 		std::cerr << "Year outside of database (2009 - 2022)" << std::endl;
-	if (d.month < 1 || d.month > 12)
+	if (month < 1 || month > 12)
 		std::cerr << "Month out of range (1 - 12)" << std::endl;
-	if (d.day < 1 || d.day > 31)
+	if (day < 1 || day > 31)
 		std::cerr << "Day out of range (1 - 31)" << std::endl;
 
-	std::cout << d.year << " " << d.month << " " << d.day << std::endl;
-
-	return d;
+	setDate(year, month, day);
 }
 
-void checkValue(std::string value_str, t_data &d)
+void inData::setDate(int year, int month, int day)
 {
-	d.value = std::stod(value_str);
+	this->year = year;
+	this->month = month;
+	this->day = day;
+}
 
-	if (d.value > std::numeric_limits<int>::max())
+void inData::checkValue(std::string value_str)
+{
+	double value = std::stod(value_str);
+
+	if (value > std::numeric_limits<int>::max())
 		std::cerr << "Too large number" << std::endl;
-	else if (d.value < 0.0)
+	else if (value < 0.0)
 		std::cerr << "Not a positive ammount" << std::endl;
-	else
-		std::cout << std::fixed << d.value << std::endl; //what is the right precision / display-type here?
+
+	setValue(value);
+}
+
+void inData::setValue(double value)
+{
+	this->value = value;
+}
+
+void inData::getValues(void) const
+{
+	std::cout << this->year << "-" << this->month << "-" << this->day << " | " << std::fixed << this->value << std::endl;
 }
