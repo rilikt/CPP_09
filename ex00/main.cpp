@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 09:43:56 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/22 11:16:05 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/01/25 09:46:40 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,17 +22,20 @@ Notes:
 
 */
 
-
 int main(int argc, char **argv)
 {
+	BitcoinExchange btc;
 	if (argc == 2)
 	{
 		try
 		{
 			//Open, Read input file
-			validateInput(argv[1]);
-			//Parse input
+			btc.readInput(argv[1]);
+			btc.printContainer();
+			//Sort Copy of the container to compare with data.csv
+
 			//Find corresponding dates in data file and calc value
+
 			//Print results
 		}
 		catch (const std::exception &e)
@@ -45,3 +48,5 @@ int main(int argc, char **argv)
 
 	return (0);
 }
+
+
