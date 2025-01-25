@@ -6,13 +6,11 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 09:43:58 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/25 09:54:54 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/01/25 11:55:31 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
-
-//Opening, reading, parsing, validating and storing of input data
 
 //Open file and read from it
 void BitcoinExchange::readInput(char *str)
@@ -28,6 +26,8 @@ void BitcoinExchange::readInput(char *str)
 		throw std::runtime_error("Could not access file");
 	file.close();
 }
+
+
 
 //Parse file line by line and add to container
 void BitcoinExchange::parseLine(char *str, int i)
@@ -61,6 +61,8 @@ void BitcoinExchange::parseLine(char *str, int i)
 	addData(d);
 }
 
+
+
 //validate Data
 void inData::checkDate(std::string year_str, std::string month_str, std::string day_str)
 {
@@ -90,18 +92,15 @@ void inData::checkValue(std::string value_str)
 	setValue(value);
 }
 
+
+
 //BitcoinExchange Util functions
 void BitcoinExchange::addData(inData d)
 {
 	this->in_data.push_back(d);
 }
 
-void BitcoinExchange::printContainer() const
-{
-	std::cout << "Printing Container..." << std::endl;
-	for(auto &it: this->in_data)
-		it.getValues();
-}
+
 
 //inData Setters
 void inData::setDate(int year, int month, int day)
@@ -131,8 +130,38 @@ void inData::setInput(std::string input, int line)
 	this->line = line;
 }
 
-//in Data getters
-void inData::getValues(void) const
+
+
+//inData getters
+int inData::dateSum(void) const
+{
+	return (this->year + this->month + this->day);
+}
+
+
+
+//Sorting utility
+bool customSort(const inData &a, const inData &b)
+{
+	return (a.dateSum() < b.dateSum());
+}
+
+void BitcoinExchange::sortInput()
+{
+	std::sort(in_data.begin(), in_data.end(), customSort);
+}
+
+
+
+//Printing
+void BitcoinExchange::printContainer() const
+{
+	std::cout << "Printing Container..." << std::endl;
+	for(auto &it: this->in_data)
+		it.printValues();
+}
+
+void inData::printValues(void) const
 {
 	if (this->invalid)
 		std::cerr << this->msg << " | Input line " << this->line << ": '" + this->input + "'" << std::endl;
