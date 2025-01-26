@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 10:07:40 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/26 10:36:59 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/01/26 12:37:54 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ class inData
 	int month = 0;
 	int day = 0;
 	double value = 0;
+	double result = 0;
 	bool invalid = false;
 	std::string input;
 	int line = 0;
@@ -43,11 +44,13 @@ class inData
 	void setValue(double value);
 	void setError(std::string msg);
 	void setInput(std::string input, int line);
+	void setResult(double multiplier);
 	//getters
 	int getYear(void) const;
 	int getMonth(void) const;
 	int getDay(void) const;
 	double getValue(void) const;
+	bool isInvalid(void) const;
 	//printer
 	void printValues(void) const;
 	//checks
@@ -71,7 +74,10 @@ class BitcoinExchange
 	//Printing
 	void printContainer(void) const;
 	//Handling file input
-	void parseLine(char *str, int line);
+	inData parseLine(char *str, int line);
 	void readInput(char *str);
 	void sortInput(void);
+	void readData(void);
+	//Matching values
+	void findMatch(const inData &curr, const inData &prev);
 };

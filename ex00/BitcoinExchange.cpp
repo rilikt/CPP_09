@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 09:43:58 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/26 11:07:20 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/01/26 13:01:31 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,14 +27,65 @@ void BitcoinExchange::readInput(char *str)
 	file.close();
 }
 
+void BitcoinExchange::readData()
+{
+	std::ifstream data("./data.csv");
+	std::string line;
+	bool first = true;
+	inData prev;
+	inData curr;
 
+	while(std::getline(data, line))
+	{
+		curr = parseLine(line.data(), -1);
+		if(curr.isInvalid()) //skipping first line
+		{
+			std::cout << "skipped: " << std::endl;
+			continue;
+		}
+		if (first)
+			prev = curr; first = false;
+		findMatch(curr, prev);
+		prev = curr;
+	}
+}
+
+void BitcoinExchange::findMatch(const inData &curr, const inData &prev)
+{
+	static auto it = this->in_data.begin();
+	if (it->isInvalid())
+		it++; return;
+	if (it->getYear() == curr.getYear() && it->getMonth() == curr.getMonth() && it->getDay() == curr.getDay())
+	{
+		it->setResult(curr.getValue());
+		it++;
+	}
+	else if (it->getYear() == curr.getYear() && it->getMonth() == curr.getMonth() && it->getDay() > curr.getDay())
+	{
+		it->setResult(prev.getValue());
+		it++;
+	}	
+	
+}
+
+void inData::setResult(double multiplier)
+{
+	this->result = this->value * multiplier;
+	std::cout << this->value << '*' << multiplier << "result: " << this->result << std::endl;
+}
+
+bool inData::isInvalid(void) const
+{
+	return (this->invalid);
+}
 
 //Parse file line by line and add to container
-void BitcoinExchange::parseLine(char *str, int i)
+inData BitcoinExchange::parseLine(char *str, int i)
 {
 	inData d;
 	std::regex format(R"(\s*([dD][aA][tT][eE])\s*\|\s*([vV][aA][lL][uU][eE])\s*)");
 	std::regex line(R"(\s*(\d+-\d+-\d+)\s*\|\s*((\+?|-?)(\d*\.?\d*))\s*)");
+	std::regex csvline(R"(\s*(\d+-\d+-\d+)\s*,\s*((\+?|-?)(\d*\.?\d*))\s*)");
 	std::regex date(R"((\d{4})-(\d{2})-(\d{2}))");
 	std::regex value(R"((\+?|-?)(\d+)|(\d*\.\d+)|(\d+\.\d*))");
 	std::cmatch lm;
@@ -42,9 +93,9 @@ void BitcoinExchange::parseLine(char *str, int i)
 	std::cmatch vm;
 
 	if (std::regex_match(str, format) && i == 1)
-		return;
+		return d;
 	d.setInput(str, i);
-	if (std::regex_match(str, lm, line))
+	if (std::regex_match(str, lm, line) || (i == -1 && std::regex_match(str, lm, csvline)))
 	{
 		if (std::regex_match(lm.str(1).data(), dm, date))
 			d.checkDate(dm.str(1), dm.str(2), dm.str(3));
@@ -57,8 +108,9 @@ void BitcoinExchange::parseLine(char *str, int i)
 	}
 	else
 		d.setError("Invalid input type. Expected: 'YYYY-MM-DD | btc ammount (int or double)'");
-
-	addData(d);
+	if (i >= 0)
+		addData(d);
+	return(d);
 }
 
 
@@ -166,7 +218,6 @@ bool customSort(const inData &a, const inData &b)
 		return (a.getDay() < b.getDay());
 	else
 		return false;
-	// return (a.getYear() <= b.getYear() && a.getMonth() < b.getMonth() && a.getDay() < b.getDay());
 }
 
 void BitcoinExchange::sortInput()
@@ -189,5 +240,5 @@ void inData::printValues(void) const
 	if (this->invalid)
 		std::cerr << this->msg << " | Input line " << this->line << ": '" + this->input + "'" << std::endl;
 	else
-		std::cout << this->year << "-" << this->month << "-" << this->day << " | " << std::fixed << this->value << std::endl;
+		std::cout << this->year << "-" << this->month << "-" << this->day << " | " << std::fixed << this->value << " => " << this->result << std::endl;
 }
