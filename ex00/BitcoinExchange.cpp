@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 09:43:58 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/25 11:55:31 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/01/26 11:07:20 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,9 +133,24 @@ void inData::setInput(std::string input, int line)
 
 
 //inData getters
-int inData::dateSum(void) const
+int inData::getYear(void) const
 {
-	return (this->year + this->month + this->day);
+	return this->year;
+}
+
+int inData::getMonth(void) const
+{
+	return this->month;
+}
+
+int inData::getDay(void) const
+{
+	return this->day;
+}
+
+double inData::getValue(void) const
+{
+	return this->value;
 }
 
 
@@ -143,12 +158,20 @@ int inData::dateSum(void) const
 //Sorting utility
 bool customSort(const inData &a, const inData &b)
 {
-	return (a.dateSum() < b.dateSum());
+	if (a.getYear() < b.getYear())
+		return true;
+	else if (a.getYear() == b.getYear())
+		return (a.getMonth() < b.getMonth());
+	else if (a.getYear() == b.getYear() && a.getMonth() == b.getMonth())
+		return (a.getDay() < b.getDay());
+	else
+		return false;
+	// return (a.getYear() <= b.getYear() && a.getMonth() < b.getMonth() && a.getDay() < b.getDay());
 }
 
 void BitcoinExchange::sortInput()
 {
-	std::sort(in_data.begin(), in_data.end(), customSort);
+	std::sort(this->in_data.begin(), this->in_data.end(), customSort);
 }
 
 

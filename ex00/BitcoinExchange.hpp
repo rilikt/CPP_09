@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 10:07:40 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/25 11:51:34 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/01/26 10:36:59 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,10 @@ class inData
 	void setError(std::string msg);
 	void setInput(std::string input, int line);
 	//getters
-	int dateSum(void) const;
+	int getYear(void) const;
+	int getMonth(void) const;
+	int getDay(void) const;
+	double getValue(void) const;
 	//printer
 	void printValues(void) const;
 	//checks
