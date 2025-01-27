@@ -6,14 +6,14 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 09:43:58 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/26 13:01:31 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/01/27 16:04:16 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
 
 //Open file and read from it
-void BitcoinExchange::readInput(char *str)
+void BitcoinExchange::readInput(const char *str)
 {
 	std::ifstream file(str);
 	std::string line;
@@ -21,57 +21,73 @@ void BitcoinExchange::readInput(char *str)
 
 	if(file.is_open())
 		while (std::getline(file, line))
-			parseLine(line.data(), ++i);
+			!strcmp("data.csv", str) ? parseLine(line.data(), -1) : parseLine(line.data(), ++i);
 	else
 		throw std::runtime_error("Could not access file");
 	file.close();
 }
 
-void BitcoinExchange::readData()
+void BitcoinExchange::findMatch()
 {
-	std::ifstream data("./data.csv");
-	std::string line;
-	bool first = true;
-	inData prev;
-	inData curr;
+	auto it = this->in_data_cpy.begin();
+	auto csv_it = this->csv.begin();
 
-	while(std::getline(data, line))
+	while (it != this->in_data_cpy.end() && csv_it != this->csv.end())
 	{
-		curr = parseLine(line.data(), -1);
-		if(curr.isInvalid()) //skipping first line
+		while (it->isInvalid() && it != this->in_data_cpy.end())
+			it++;
+		while (it->getYear() > csv_it->getYear() && csv_it != this->csv.end())
+			csv_it++;
+		while (it->getYear() == csv_it->getYear() && it->getMonth() < csv_it->getMonth() && csv_it != this->csv.end())
+			csv_it++;
+		if (it->getYear() == csv_it->getYear() && it->getMonth() == csv_it->getMonth() && it->getDay() == csv_it->getDay())
 		{
-			std::cout << "skipped: " << std::endl;
-			continue;
+			std::cout << "perfect match" << std::endl;
+			it->setResult(csv_it->getValue(), "calc");
+			it++;
 		}
-		if (first)
-			prev = curr; first = false;
-		findMatch(curr, prev);
-		prev = curr;
+		else if (it->getYear() <= csv_it->getYear() && it->getMonth() <= csv_it->getMonth() && it->getDay() < csv_it->getDay())
+		{
+			std::cout << "rounding down" << std::endl;
+			it->setResult((csv_it -1)->getValue(), "calc");
+			it++;
+		}
+		else
+			csv_it++;
 	}
+	setValue();
 }
 
-void BitcoinExchange::findMatch(const inData &curr, const inData &prev)
+void BitcoinExchange::setValue()
 {
-	static auto it = this->in_data.begin();
-	if (it->isInvalid())
-		it++; return;
-	if (it->getYear() == curr.getYear() && it->getMonth() == curr.getMonth() && it->getDay() == curr.getDay())
+	auto it = this->in_data.begin();
+
+	while (it != this->in_data.end())
 	{
-		it->setResult(curr.getValue());
+		for (auto it2 = this->in_data_cpy.begin(); it2 != this->in_data_cpy.end(); it2++)
+		{
+			if (it2->getLine() == it->getLine())
+				it->setResult(it2->getResult(), "set");
+		}
 		it++;
 	}
-	else if (it->getYear() == curr.getYear() && it->getMonth() == curr.getMonth() && it->getDay() > curr.getDay())
-	{
-		it->setResult(prev.getValue());
-		it++;
-	}	
-	
+
 }
 
-void inData::setResult(double multiplier)
+int inData::getLine(void) const
 {
-	this->result = this->value * multiplier;
-	std::cout << this->value << '*' << multiplier << "result: " << this->result << std::endl;
+	return this->line;
+}
+
+void inData::setResult(double input, std::string mode)
+{
+	if (mode == "calc")
+	{
+		this->result = this->value * input;
+		std::cout << input << " * " << this->value << " = " << this->result << std::endl;
+	}
+	else if (mode == "set")
+		this->result = input;
 }
 
 bool inData::isInvalid(void) const
@@ -79,11 +95,16 @@ bool inData::isInvalid(void) const
 	return (this->invalid);
 }
 
+double inData::getResult(void) const
+{
+	return this->result;
+}
+
 //Parse file line by line and add to container
-inData BitcoinExchange::parseLine(char *str, int i)
+void BitcoinExchange::parseLine(char *str, int i)
 {
 	inData d;
-	std::regex format(R"(\s*([dD][aA][tT][eE])\s*\|\s*([vV][aA][lL][uU][eE])\s*)");
+	std::regex format(R"((\s*(date)\s*\|\s*(value)\s*)|(\s*date\s*,\s*exchange_rate\s*))", std::regex_constants::icase);
 	std::regex line(R"(\s*(\d+-\d+-\d+)\s*\|\s*((\+?|-?)(\d*\.?\d*))\s*)");
 	std::regex csvline(R"(\s*(\d+-\d+-\d+)\s*,\s*((\+?|-?)(\d*\.?\d*))\s*)");
 	std::regex date(R"((\d{4})-(\d{2})-(\d{2}))");
@@ -92,8 +113,8 @@ inData BitcoinExchange::parseLine(char *str, int i)
 	std::cmatch dm;
 	std::cmatch vm;
 
-	if (std::regex_match(str, format) && i == 1)
-		return d;
+	if (std::regex_match(str, format))
+		return;
 	d.setInput(str, i);
 	if (std::regex_match(str, lm, line) || (i == -1 && std::regex_match(str, lm, csvline)))
 	{
@@ -109,8 +130,9 @@ inData BitcoinExchange::parseLine(char *str, int i)
 	else
 		d.setError("Invalid input type. Expected: 'YYYY-MM-DD | btc ammount (int or double)'");
 	if (i >= 0)
-		addData(d);
-	return(d);
+		addData(d, "in_data");
+	else
+		addData(d, "csv");
 }
 
 
@@ -121,13 +143,60 @@ void inData::checkDate(std::string year_str, std::string month_str, std::string 
 	int year = std::stoi(year_str);
 	int month = std::stoi(month_str);
 	int day = std::stoi(day_str);
-
+	int max;
+	
+	if ((year > 2022 || (year == 2022 && (month > 3 || (month == 3 && day > 29)))) || (year < 2009 || (year == 2009 && month == 1 && day == 1)))
+	{
+		setError("Date out of database range");
+		setDate(year, month, day);
+		return;
+	}
 	if (year < 2009 || year > 2022)
 		setError("Year outside of database (2009 - 2022)");
 	if (month < 1 || month > 12)
 		setError("Month out of range (1 - 12)");
-	if (day < 1 || day > 31)
-		setError("Day out of range (1 - 31)");
+	switch (month)
+	{
+		case (1):
+			max = 31; break;
+		case (2):
+			if (year % 4 == 0)
+			{
+				if (year % 100 == 0 && year % 400 != 0)
+				{
+					max = 28; 
+					break;
+				}
+				else
+					max = 29; break;
+			}
+			else
+				max = 28; break;
+		case (3):
+			max = 31; break;
+		case (4):
+			max = 30; break;
+		case (5):
+			max = 31; break;
+		case (6):
+			max = 30; break;
+		case (7):
+			max = 31; break;
+		case (8):
+			max = 31; break;
+		case (9):
+			max = 30; break;
+		case (10):
+			max = 31; break;
+		case (11):
+			max = 30; break;
+		case (12):
+			max = 31; break;
+		default:
+			max = 31;
+	}
+	if (day < 1 || day > max)
+		setError("Day out of range (1 - " + std::to_string(max) + ")");
 
 	setDate(year, month, day);
 }
@@ -147,9 +216,12 @@ void inData::checkValue(std::string value_str)
 
 
 //BitcoinExchange Util functions
-void BitcoinExchange::addData(inData d)
+void BitcoinExchange::addData(inData d, std::string container)
 {
-	this->in_data.push_back(d);
+	if (container == "csv")
+		this->csv.push_back(d);
+	else
+		this->in_data.push_back(d);
 }
 
 
@@ -212,7 +284,7 @@ bool customSort(const inData &a, const inData &b)
 {
 	if (a.getYear() < b.getYear())
 		return true;
-	else if (a.getYear() == b.getYear())
+	else if (a.getYear() == b.getYear() && a.getMonth() != b.getMonth())
 		return (a.getMonth() < b.getMonth());
 	else if (a.getYear() == b.getYear() && a.getMonth() == b.getMonth())
 		return (a.getDay() < b.getDay());
@@ -222,17 +294,35 @@ bool customSort(const inData &a, const inData &b)
 
 void BitcoinExchange::sortInput()
 {
-	std::sort(this->in_data.begin(), this->in_data.end(), customSort);
+	this->in_data_cpy = this->in_data;
+	std::sort(this->in_data_cpy.begin(), this->in_data_cpy.end(), customSort);
+	std::sort(this->csv.begin(), this->csv.end(), customSort);
+
 }
 
 
 
 //Printing
-void BitcoinExchange::printContainer() const
+void BitcoinExchange::printContainer(int i) const
 {
-	std::cout << "Printing Container..." << std::endl;
-	for(auto &it: this->in_data)
-		it.printValues();
+	if (i == 1)
+	{
+		std::cout << "Printing Container in_data..." << std::endl;
+		for(auto &it: this->in_data)
+			it.printValues();
+	}
+	else if (i == 2)
+	{
+		std::cout << "Printing Container csv..." << std::endl;
+		for(auto &it: this->csv)
+			it.printValues();
+	}
+	else
+	{
+		std::cout << "Printing Container in_data_cpy..." << std::endl;
+		for(auto &it: this->in_data_cpy)
+			it.printValues();
+	}
 }
 
 void inData::printValues(void) const
@@ -240,5 +330,11 @@ void inData::printValues(void) const
 	if (this->invalid)
 		std::cerr << this->msg << " | Input line " << this->line << ": '" + this->input + "'" << std::endl;
 	else
-		std::cout << this->year << "-" << this->month << "-" << this->day << " | " << std::fixed << this->value << " => " << this->result << std::endl;
+	{
+		std::cout << this->year;  
+		(this->month < 10) ? std::cout << "-0" : std::cout << "-"; 
+		std::cout << this->month;
+		(this->day < 10) ? std::cout << "-0" : std::cout << "-"; 
+		std::cout << this->day << " | " << std::defaultfloat << this->value << " => " << this->result << std::endl;	
+	}
 }

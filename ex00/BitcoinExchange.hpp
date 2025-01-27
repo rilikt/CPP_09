@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 10:07:40 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/26 12:37:54 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/01/27 13:59:56 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,15 @@ class inData
 	void setValue(double value);
 	void setError(std::string msg);
 	void setInput(std::string input, int line);
-	void setResult(double multiplier);
+	void setResult(double input, std::string mode);
 	//getters
 	int getYear(void) const;
 	int getMonth(void) const;
 	int getDay(void) const;
 	double getValue(void) const;
 	bool isInvalid(void) const;
+	int getLine(void) const;
+	double getResult(void) const;
 	//printer
 	void printValues(void) const;
 	//checks
@@ -62,6 +64,8 @@ class BitcoinExchange
 {
   private:
 	std::vector<inData> in_data;
+	std::vector<inData> in_data_cpy;
+	std::vector<inData> csv;
 
   public:
 	//Con- Destructor
@@ -70,14 +74,17 @@ class BitcoinExchange
 	BitcoinExchange& operator=(const BitcoinExchange &other) = default;
 	~BitcoinExchange() = default;
 	//Adding elements to container
-	void addData(inData d);
+	void addData(inData d, std::string container);
 	//Printing
-	void printContainer(void) const;
+	void printContainer(int i) const;
 	//Handling file input
-	inData parseLine(char *str, int line);
-	void readInput(char *str);
+	void parseLine(char *str, int line);
+	void readInput(const char *str);
 	void sortInput(void);
 	void readData(void);
 	//Matching values
-	void findMatch(const inData &curr, const inData &prev);
+	void findMatch();
+	// Setter
+	void setValue();
+
 };

@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 09:43:56 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/26 12:38:33 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/01/27 14:41:59 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,15 @@ int main(int argc, char **argv)
 	{
 		try
 		{
-			//Open, Read input file
+			//Open, Read input file and given data.csv
 			btc.readInput(argv[1]);
+			btc.readInput("data.csv");
 			//Sort Copy of the container to compare with data.csv
 			btc.sortInput();
+			// btc.printContainer(3);
 			//Open data.csv => find closest date sum and calculate value
-			btc.readData();
-			btc.printContainer();
+			btc.findMatch();
+			btc.printContainer(1);
 
 			//Print results
 		}
