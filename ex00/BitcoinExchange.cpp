@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 09:43:58 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/27 16:04:16 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/01/27 16:07:40 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,11 @@ void BitcoinExchange::readInput(const char *str)
 
 	if(file.is_open())
 		while (std::getline(file, line))
+		{
+			if (!line.length())
+				continue;
 			!strcmp("data.csv", str) ? parseLine(line.data(), -1) : parseLine(line.data(), ++i);
+		}
 	else
 		throw std::runtime_error("Could not access file");
 	file.close();
