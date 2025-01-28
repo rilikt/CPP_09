@@ -6,17 +6,17 @@
 #    By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/09 15:31:31 by timschmi          #+#    #+#              #
-#    Updated: 2025/01/27 15:08:01 by timschmi         ###   ########.fr        #
+#    Updated: 2025/01/28 10:33:21 by timschmi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SRC = main.cpp BitcoinExchange.cpp
+SRC = main.cpp RPN.cpp
 OBJ_DIR = obj
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.cpp=.o))
 
 CC = c++
 
-NAME = btc
+NAME = rpn
 CFLAGS = -std=c++17 -Wall -Werror -Wextra #-fsanitize=address
 
 all: $(NAME)

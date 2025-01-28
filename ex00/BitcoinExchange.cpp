@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 09:43:58 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/27 16:07:40 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/01/28 10:31:42 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,13 +46,11 @@ void BitcoinExchange::findMatch()
 			csv_it++;
 		if (it->getYear() == csv_it->getYear() && it->getMonth() == csv_it->getMonth() && it->getDay() == csv_it->getDay())
 		{
-			std::cout << "perfect match" << std::endl;
 			it->setResult(csv_it->getValue(), "calc");
 			it++;
 		}
 		else if (it->getYear() <= csv_it->getYear() && it->getMonth() <= csv_it->getMonth() && it->getDay() < csv_it->getDay())
 		{
-			std::cout << "rounding down" << std::endl;
 			it->setResult((csv_it -1)->getValue(), "calc");
 			it++;
 		}
@@ -86,10 +84,7 @@ int inData::getLine(void) const
 void inData::setResult(double input, std::string mode)
 {
 	if (mode == "calc")
-	{
 		this->result = this->value * input;
-		std::cout << input << " * " << this->value << " = " << this->result << std::endl;
-	}
 	else if (mode == "set")
 		this->result = input;
 }
@@ -147,7 +142,7 @@ void inData::checkDate(std::string year_str, std::string month_str, std::string 
 	int year = std::stoi(year_str);
 	int month = std::stoi(month_str);
 	int day = std::stoi(day_str);
-	int max;
+	int max = 31;
 	
 	if ((year > 2022 || (year == 2022 && (month > 3 || (month == 3 && day > 29)))) || (year < 2009 || (year == 2009 && month == 1 && day == 1)))
 	{
@@ -159,46 +154,18 @@ void inData::checkDate(std::string year_str, std::string month_str, std::string 
 		setError("Year outside of database (2009 - 2022)");
 	if (month < 1 || month > 12)
 		setError("Month out of range (1 - 12)");
-	switch (month)
+
+	if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12)
+		max = 31;
+	else if (month == 2)
 	{
-		case (1):
-			max = 31; break;
-		case (2):
-			if (year % 4 == 0)
-			{
-				if (year % 100 == 0 && year % 400 != 0)
-				{
-					max = 28; 
-					break;
-				}
-				else
-					max = 29; break;
-			}
-			else
-				max = 28; break;
-		case (3):
-			max = 31; break;
-		case (4):
-			max = 30; break;
-		case (5):
-			max = 31; break;
-		case (6):
-			max = 30; break;
-		case (7):
-			max = 31; break;
-		case (8):
-			max = 31; break;
-		case (9):
-			max = 30; break;
-		case (10):
-			max = 31; break;
-		case (11):
-			max = 30; break;
-		case (12):
-			max = 31; break;
-		default:
-			max = 31;
+		if (year % 4 == 0 || (year % 4 == 0 && (year % 100 == 0 && year % 400 == 0)))
+				max = 29;
+		else
+			max = 28;
 	}
+	else
+		month = 30;
 	if (day < 1 || day > max)
 		setError("Day out of range (1 - " + std::to_string(max) + ")");
 

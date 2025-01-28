@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 09:43:56 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/27 14:41:59 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/01/28 10:30:32 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,10 @@ int main(int argc, char **argv)
 			btc.readInput("data.csv");
 			//Sort Copy of the container to compare with data.csv
 			btc.sortInput();
-			// btc.printContainer(3);
-			//Open data.csv => find closest date sum and calculate value
+			//Find closest date sum and calculate value
 			btc.findMatch();
-			btc.printContainer(1);
-
 			//Print results
+			btc.printContainer(1);
 		}
 		catch (const std::exception &e)
 		{
