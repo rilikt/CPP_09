@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:33:54 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/28 11:43:31 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/01/29 11:35:01 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 /*
 NOTES:
 arguments have to be passed as a single string because of how the terminal interprets certain operators eg *
-
+are negative values a valid input??
 
 */
 
@@ -31,9 +31,11 @@ int main(int argc, char **argv)
 	{
 		//parse argument
 		rpn.parseInput(argv[1]);
+		rpn.printQueue();
 		//check for syntax error
 		//push elements onto stack
 		//pop elements and do operation
+		rpn.doMath();
 		//print result
 	}
 	catch (const std::exception &e)
