@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:33:23 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/29 11:49:23 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/01/29 16:07:06 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <iostream>
 #include <string>
 #include <stack>
-#include <queue>
+#include <deque>
 #include <regex>
 #include <cctype>
 
@@ -23,7 +23,9 @@ class RPN
 {
 	private:
 	std::stack<char> stack;
-	std::queue<std::string> queue;
+	std::deque<std::string> queue;
+	double tmp;
+	bool temp_set = false;
 	// double result;
 
 	public:
@@ -38,6 +40,10 @@ class RPN
 	void printQueue(void) const;
 	//Do math
 	void doMath(void);
-	double matchOperand(double *arr, std::string op);
+	double matchOperand(std::string *str, std::string op);
+	//Getter
+	double getTemp(void);
+	//Setter
+	void setTemp(double d);
 
 };
