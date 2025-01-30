@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: h4ns <h4ns@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:33:54 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/29 15:38:36 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/01/30 11:54:04 by h4ns             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 NOTES:
 arguments have to be passed as a single string because of how the terminal interprets certain operators eg *
 are negative values a valid input??
+what about remainder???
+dvision by zero??
 
 */
 
@@ -35,7 +37,6 @@ int main(int argc, char **argv)
 		//check for syntax error
 		//push elements onto stack
 		//pop elements and do operation
-		rpn.doMath();
 		//print result
 	}
 	catch (const std::exception &e)

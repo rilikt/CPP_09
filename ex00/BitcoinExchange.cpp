@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: h4ns <h4ns@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 09:43:58 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/28 10:31:42 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/01/30 11:12:46 by h4ns             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void BitcoinExchange::readInput(const char *str)
 		{
 			if (!line.length())
 				continue;
-			!strcmp("data.csv", str) ? parseLine(line.data(), -1) : parseLine(line.data(), ++i);
+			!std::strcmp("data.csv", str) ? parseLine(line.data(), -1) : parseLine(line.data(), ++i);
 		}
 	else
 		throw std::runtime_error("Could not access file");

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: h4ns <h4ns@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 10:07:40 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/27 13:59:56 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/01/30 11:13:02 by h4ns             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <limits>
 #include <regex>
 #include <string>
+#include <cstring>
 #include <vector>
 #include <algorithm>
 
