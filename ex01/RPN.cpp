@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RPN.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: h4ns <h4ns@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:33:25 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/30 11:55:30 by h4ns             ###   ########.fr       */
+/*   Updated: 2025/01/31 13:59:48 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,11 @@ double RPN::matchOperation(double *arr, std::string op)
 	else if (op == "*")
 		return(arr[0] * arr[1]);
 	else if (op == "/")
+	{
+		if (arr[0] == 0 || arr[1] == 0)
+			throw std::runtime_error("Dividision by 0 not possible");
 		return(arr[0] / arr[1]);
+	}
 	else
 		throw std::runtime_error("Input invalid");
 }
