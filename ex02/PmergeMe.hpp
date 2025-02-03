@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 14:03:15 by timschmi          #+#    #+#             */
-/*   Updated: 2025/02/02 15:07:50 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/02/03 07:26:04 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ class ListSort
 class Vec
 {
 	public:
-	std::vector<std::vector<int>> pair;
+	// std::vector<std::vector<int>> pair;
+	std::vector<std::pair<std::vector<int>, std::vector<int>>> pair;
 	// std::vector<std::pair<std::pair<int, int>, std::pair<int, int>>> pair;
 	std::vector<int> unpaired;
 

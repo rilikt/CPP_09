@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/01 13:10:30 by timschmi          #+#    #+#             */
-/*   Updated: 2025/02/02 15:40:00 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/02/03 09:23:17 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,15 @@ void Vec::storeArgs(int argc, char **argv)
 	int i = 1;
 	int a;
 	int b;
-	for (; i+1 < argc; i+=2)
+	for (int j = 0; i+1 < argc; i+=2, j++)
 	{
 		if ((a = std::stoi(argv[i])) < 0 || (b = std::stoi(argv[i+1])) < 0)
 			throw std::runtime_error("Only positve vales accepted.");
-		if (a > b)
-			this->pair.push_back({b, a});
-		else
-			this->pair.push_back({a, b});
+
+		this->pair.push_back(std::make_pair(std::vector<int>(), std::vector<int>()));
+
+		this->pair[j].first.push_back(a < b ? a : b);
+		this->pair[j].second.push_back(b > a ? b : a);
 	}
 	if (i != argc)
 	{
@@ -38,19 +39,36 @@ void Vec::storeArgs(int argc, char **argv)
 
 void Vec::recursivePairs(void)
 {
-
-	for (auto it = pair.begin(); it != pair.end() -1; it++)
+	int i = 0;
+	std::vector<std::pair<std::vector<int>, std::vector<int>>> p;
+	auto it = pair.begin();
+	for (; it != pair.end() -1 && pair.size() > 1; it = std::next(it, 2), i++)
 	{
+		p.push_back(std::make_pair(std::vector<int>(), std::vector<int>()));
+
+		for (auto it2 = it->first.begin(); it2 != it->first.end(); it2++)
+			p[i].first.push_back(*it2);
+		for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++)
+			p[i].first.push_back(*it2);
 		if (std::next(it) != pair.end())
 		{
-			for (auto it2: *std::next(it))
-				it->push_back(it2);
-	
-			std::next(it)->clear();
-			pair.erase(std::next(it));
-			std::cout << "eyo" << std::endl;
+			for (auto it2 = std::next(it)->first.begin(); it2 != std::next(it)->first.end(); it2++)
+				p[i].second.push_back(*it2);
+			for (auto it2 = std::next(it)->second.begin(); it2 != std::next(it)->second.end(); it2++)
+				p[i].second.push_back(*it2);
 		}
 	}
+	std::cout << "Pair size: " << pair.size() << std::endl;
+	while (it != pair.end())
+	{
+		for (auto it2 : it->first)
+			unpaired.push_back(it2);
+		for (auto it2 : it->second)
+			unpaired.push_back(it2);
+		it++;
+	}
+	this->pair.clear();
+	this->pair = p;
 }
 
 
@@ -115,10 +133,18 @@ void Vec::recursivePairs(void)
 // Utility
 void Vec::print(void) const
 {
-	for (auto it: pair)
-		std::cout << it.front() << " " << it.back() << std::endl;
+	for (auto it = pair.begin(); it != pair.end(); it++)
+	{
+		for (auto it2 = it->first.begin(); it2 != it->first.end(); it2++)
+			std::cout << *it2 << " ";
+		for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++)
+			std::cout << *it2 << " ";
+		std::cout << std::endl;
+	}
+	std::cout << "Unpaired: ";
 	for (auto it: unpaired)
-		std::cout << it << std::endl;
+		std::cout << it << " ";
+	std::cout << std::endl;
 }
 
 
