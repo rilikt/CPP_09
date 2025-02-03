@@ -6,12 +6,11 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/01 13:10:30 by timschmi          #+#    #+#             */
-/*   Updated: 2025/02/03 09:23:17 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/02/03 11:23:18 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
-
 
 // Input / Argument handling
 void Vec::storeArgs(int argc, char **argv)
@@ -39,36 +38,43 @@ void Vec::storeArgs(int argc, char **argv)
 
 void Vec::recursivePairs(void)
 {
+	if (pair.size() == 1)
+		return;
+
 	int i = 0;
 	std::vector<std::pair<std::vector<int>, std::vector<int>>> p;
 	auto it = pair.begin();
-	for (; it != pair.end() -1 && pair.size() > 1; it = std::next(it, 2), i++)
+
+	for (; it != pair.end() && std::next(it) != pair.end(); i++, it+=2)
 	{
 		p.push_back(std::make_pair(std::vector<int>(), std::vector<int>()));
 
-		for (auto it2 = it->first.begin(); it2 != it->first.end(); it2++)
-			p[i].first.push_back(*it2);
-		for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++)
-			p[i].first.push_back(*it2);
-		if (std::next(it) != pair.end())
-		{
-			for (auto it2 = std::next(it)->first.begin(); it2 != std::next(it)->first.end(); it2++)
-				p[i].second.push_back(*it2);
-			for (auto it2 = std::next(it)->second.begin(); it2 != std::next(it)->second.end(); it2++)
-				p[i].second.push_back(*it2);
-		}
+		for (auto it2 : it->first)
+			p[i].first.push_back(it2);
+		for (auto it2 : it->second)
+			p[i].first.push_back(it2);
+
+		for (auto it2 : std::next(it)->first)
+				p[i].second.push_back(it2);
+		for (auto it2 : std::next(it)->second)
+				p[i].second.push_back(it2);
+
+		if (p[i].first.back() > p[i].second.back())
+			std::swap(p[i].first, p[i].second);
+		std::cout << "Loop: " << i << std::endl;
 	}
-	std::cout << "Pair size: " << pair.size() << std::endl;
-	while (it != pair.end())
+	std::cout << "Exit main loop" << std::endl;
+	for (;it != pair.end(); it++)
 	{
 		for (auto it2 : it->first)
 			unpaired.push_back(it2);
 		for (auto it2 : it->second)
 			unpaired.push_back(it2);
-		it++;
 	}
 	this->pair.clear();
 	this->pair = p;
+	std::cout << "Pair size: " << pair.size() << std::endl;
+	recursivePairs();
 }
 
 

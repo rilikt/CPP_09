@@ -6,12 +6,11 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:33:25 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/31 13:59:48 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/02/03 11:50:05 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RPN.hpp"
-
 
 //Input parsing
 void RPN::parseInput(std::string str)
@@ -25,7 +24,7 @@ void RPN::parseInput(std::string str)
 	for (auto it = begin; it != end; it++)
 	{
 		if (it->str(2).length() || it->str(1).length() > 1)
-			throw std::runtime_error("Invalid input: '" + it->str() + "' only values up to 9 and : '+ - / *' operators allowed.");
+			throw std::runtime_error("Invalid input: '" + it->str() + "' only values up to 9 and '+ - / *' operators allowed.");
 		if (!opCheck(it->str(1)))
 			this->queue.push_front(it->str(1));
 		else
@@ -38,7 +37,6 @@ void RPN::parseInput(std::string str)
 		doMath(op);
 
 }
-
 
 double RPN::matchOperation(double *arr, std::string op)
 {
@@ -77,8 +75,6 @@ void RPN::doMath(std::string op)
 		arr[i] = std::stod(this->queue.front());
 	this->queue.push_front(std::to_string(matchOperation(arr, op)));
 }
-
-
 
 //Printing
 void RPN::printQueue(void) const
