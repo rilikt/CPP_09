@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/01 13:10:30 by timschmi          #+#    #+#             */
-/*   Updated: 2025/02/03 11:23:18 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/02/04 16:25:08 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void Vec::recursivePairs(void)
 
 	int i = 0;
 	std::vector<std::pair<std::vector<int>, std::vector<int>>> p;
+	std::vector<int> up;
 	auto it = pair.begin();
 
 	for (; it != pair.end() && std::next(it) != pair.end(); i++, it+=2)
@@ -61,19 +62,21 @@ void Vec::recursivePairs(void)
 
 		if (p[i].first.back() > p[i].second.back())
 			std::swap(p[i].first, p[i].second);
-		std::cout << "Loop: " << i << std::endl;
 	}
-	std::cout << "Exit main loop" << std::endl;
 	for (;it != pair.end(); it++)
 	{
 		for (auto it2 : it->first)
-			unpaired.push_back(it2);
+			up.push_back(it2);
 		for (auto it2 : it->second)
-			unpaired.push_back(it2);
+			up.push_back(it2);
+		for (auto it2 : unpaired)
+			up.push_back(it2);
+		this->unpaired.clear();
+		this->unpaired = up;
 	}
 	this->pair.clear();
 	this->pair = p;
-	std::cout << "Pair size: " << pair.size() << std::endl;
+	print();
 	recursivePairs();
 }
 
@@ -139,6 +142,7 @@ void Vec::recursivePairs(void)
 // Utility
 void Vec::print(void) const
 {
+	std::cout << "Pair size: " << pair.size() << std::endl;
 	for (auto it = pair.begin(); it != pair.end(); it++)
 	{
 		for (auto it2 = it->first.begin(); it2 != it->first.end(); it2++)
