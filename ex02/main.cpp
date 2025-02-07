@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 14:03:33 by timschmi          #+#    #+#             */
-/*   Updated: 2025/02/04 15:46:19 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/02/07 14:48:12 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,18 @@ decide on Containers, prlly vector and list.
 what is the best way to nest pairs?
 	TUPLES? PAIRS? NESTED CONTAINERS?
 
+Error handling for input
+
 */
 void firstContainer(int argc, char **argv)
 {
 	Vec vec;
 
 	vec.storeArgs(argc, argv);
-	vec.print();
+	// vec.print();
 	vec.recursivePairs();
 	// vec.print();
+	vec.insert();
 
 }
 

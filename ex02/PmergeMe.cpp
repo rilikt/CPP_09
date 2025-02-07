@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/01 13:10:30 by timschmi          #+#    #+#             */
-/*   Updated: 2025/02/04 16:25:08 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/02/07 14:59:52 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,52 @@ void Vec::recursivePairs(void)
 	}
 	this->pair.clear();
 	this->pair = p;
-	print();
 	recursivePairs();
+}
+
+void Vec::insert(void)
+{
+	static int size = this->pair.at(0).first.size();
+	std::vector<std::vector<int>> mc;
+	std::cout << "Element Size: " << size << std::endl;
+
+	if (!size)
+		return;
+
+	if (size == this->pair.at(0).first.size())
+	{
+		for (auto it: pair)
+		{
+			main.push_back(it.first);
+			main.push_back(it.second);
+		}
+		size /= 2;
+		printMP();
+		insert();
+		return;
+	}
+
+	for(auto it = main.begin(); it != main.end(); it++)
+	{
+		std::vector<int> tmp(it->begin(), std::next(it->begin(), size));
+		std::vector<int> tmp2(std::next(it->begin(), size), it->end());
+
+		mc.push_back(tmp);
+		mc.push_back(tmp2);
+	}
+	main = mc;
+
+	for (auto it = std::next(main.begin(), 2); it != main.end(); it = std::next(it, 2))
+	{
+		pend.push_back(*it);
+	}
+	if (size == 1)
+		size = 0;
+	else
+		size /= 2;
+	printMP();
+	pend.clear();
+	insert();
 }
 
 
@@ -89,6 +133,33 @@ void Vec::recursivePairs(void)
 
 
 
+
+
+
+void Vec::printMP(void) const
+{
+	std::cout << "Main:" << std::endl;
+	for (auto it : main)
+	{
+		for (auto it2 : it)
+			std::cout << it2 << " ";
+		std::cout << "| ";
+	}
+	
+	std::cout << "Pend:" << std::endl;
+	for (auto it : pend)
+	{
+		for (auto it2 : it)
+			std::cout << it2 << " ";
+		std::cout << "| ";
+	}
+
+	std::cout << "Unpaired: ";
+	for (auto it: unpaired)
+		std::cout << it << " ";
+	
+	std::cout << std::endl;
+}
 
 
 
