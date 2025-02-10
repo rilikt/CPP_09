@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/01 13:10:30 by timschmi          #+#    #+#             */
-/*   Updated: 2025/02/07 14:59:52 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/02/10 16:24:01 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,27 +106,62 @@ void Vec::insert(void)
 		std::vector<int> tmp(it->begin(), std::next(it->begin(), size));
 		std::vector<int> tmp2(std::next(it->begin(), size), it->end());
 
-		mc.push_back(tmp);
+		if (it == main.begin() || !(std::distance(main.begin(), it)+1 % 2))
+			mc.push_back(tmp);
+		else
+			pend.push_back(std::make_pair(tmp, tmp2.back()));
 		mc.push_back(tmp2);
 	}
 	main = mc;
 
-	for (auto it = std::next(main.begin(), 2); it != main.end(); it = std::next(it, 2))
+	if (pend.size() == 1)
 	{
-		pend.push_back(*it);
+		binSearch();
 	}
-	if (size == 1)
-		size = 0;
-	else
-		size /= 2;
+
+	size /= 2;
 	printMP();
 	pend.clear();
 	insert();
 }
 
 
+void Vec::binSearch(void)
+{
+	int e = 0;
+	auto it = findPartner(e);
+	int count = std::distance(main.begin(), it);
+	if (count == 0)
+		throw std::runtime_error("Error in binSearch, invalid range");
+	std::cout << "Range: " << count << std::endl;
 
+	count /= 2;
+	it = main.begin() + count;
+	while (count > 0)
+	{
+		count /= 2;
+		if (pend[e].first.back() > it->back())
+		{
+			std::next(it, count);
+		}
+		else
+		{
+			it = std::next(main.begin(), count);
+		}
+		std::cout << it->back() << std::endl;
+	}
+	main.insert(++it, pend[e].first);
+}
 
+std::vector<std::vector<int>>::iterator Vec::findPartner(int e)
+{
+	for (auto it = main.begin(); it != main.end(); it++)
+	{
+		if (pend[e].second == it->back())
+			return it;
+	}
+	return(main.begin());
+}
 
 
 
@@ -145,15 +180,16 @@ void Vec::printMP(void) const
 			std::cout << it2 << " ";
 		std::cout << "| ";
 	}
-	
+	std::cout << std::endl;
 	std::cout << "Pend:" << std::endl;
 	for (auto it : pend)
 	{
-		for (auto it2 : it)
+		for (auto it2 : it.first)
 			std::cout << it2 << " ";
+		std::cout << "a: " << it.second;
 		std::cout << "| ";
 	}
-
+	std::cout << std::endl;
 	std::cout << "Unpaired: ";
 	for (auto it: unpaired)
 		std::cout << it << " ";
