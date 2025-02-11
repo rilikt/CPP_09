@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 14:03:33 by timschmi          #+#    #+#             */
-/*   Updated: 2025/02/07 14:48:12 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/02/11 15:13:14 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ void firstContainer(int argc, char **argv)
 	vec.recursivePairs();
 	// vec.print();
 	vec.insert();
+	std::cout << "--- after ---" << std::endl;
+	vec.printMP();
 
 }
 

@@ -6,11 +6,13 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/01 13:10:30 by timschmi          #+#    #+#             */
-/*   Updated: 2025/02/10 16:24:01 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/02/11 16:18:37 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
+
+int jnum[] = {1, 3, 5, 11, 21, 43, 85, 171, 341};
 
 // Input / Argument handling
 void Vec::storeArgs(int argc, char **argv)
@@ -114,44 +116,84 @@ void Vec::insert(void)
 	}
 	main = mc;
 
-	if (pend.size() == 1)
-	{
-		binSearch();
-	}
+	std::cout << "-- After Splitting:" << std::endl;
+	printMP();
+
+	// if (pend.size() == 1)
+	// 	binSearch(0);
+	// else
+		jInsert();
+
+	std::cout << "-- After Insertion:" << std::endl;
+	printMP();
 
 	size /= 2;
-	printMP();
 	pend.clear();
 	insert();
 }
 
 
-void Vec::binSearch(void)
+void Vec::binSearch(int e)
 {
-	int e = 0;
 	auto it = findPartner(e);
-	int count = std::distance(main.begin(), it);
-	if (count == 0)
+	int range = std::distance(main.begin(), it);
+	if (range == 0)
 		throw std::runtime_error("Error in binSearch, invalid range");
-	std::cout << "Range: " << count << std::endl;
+	std::cout << "Range: " << range << std::endl;
 
-	count /= 2;
-	it = main.begin() + count;
-	while (count > 0)
+	std::cout << "Pair Nr: "<< e << " | " << pend[e].first.back() << " " << pend[e].second << std::endl;
+
+	auto first = main.begin();
+	while (range > 0)
 	{
-		count /= 2;
+		it = first;
+		int step = range / 2;
+		std::advance(it, step);
 		if (pend[e].first.back() > it->back())
 		{
-			std::next(it, count);
+			first = ++it;
+			range -= step + 1;
 		}
 		else
-		{
-			it = std::next(main.begin(), count);
-		}
+			range = step;
 		std::cout << it->back() << std::endl;
 	}
-	main.insert(++it, pend[e].first);
+	// if (pend[e].first.back() > it->back())
+	// 	main.insert(++it, pend[e].first);
+	// else
+		main.insert(it, pend[e].first);
 }
+
+
+void Vec::jInsert(void)
+{
+	int i  = 1;
+	int size = pend.size();
+	while (size >= jnum[i] - jnum[i-1])
+	{
+		for (int e = jnum[i] - 2; e >= jnum[i-1]-1; e--, size--)
+		{
+			std::cout << "e: " << e << std::endl;
+			binSearch(e);
+		}
+		i++;
+	}
+	while (size)
+	{
+		std::cout << "LEFTOVERS" << std::endl;
+		for (int b = pend.size() - 1; b != jnum[i-1] -2; b--, size--)
+			binSearch(b);
+	}
+	while (unpaired.size() >= main[0].size())
+	{
+		std::vector<int> tmp(unpaired.begin(), std::next(unpaired.begin(), main[0].size()));
+		unpaired.erase(unpaired.begin(),  std::next(unpaired.begin(), main[0].size()));
+		pend.push_back(std::make_pair(tmp, -1));
+		binSearch(pend.size() -1);
+	}
+}
+
+
 
 std::vector<std::vector<int>>::iterator Vec::findPartner(int e)
 {
@@ -160,7 +202,7 @@ std::vector<std::vector<int>>::iterator Vec::findPartner(int e)
 		if (pend[e].second == it->back())
 			return it;
 	}
-	return(main.begin());
+	return(main.end());
 }
 
 
