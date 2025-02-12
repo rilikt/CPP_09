@@ -6,13 +6,13 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/01 13:10:30 by timschmi          #+#    #+#             */
-/*   Updated: 2025/02/11 16:18:37 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/02/12 16:58:50 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
 
-int jnum[] = {1, 3, 5, 11, 21, 43, 85, 171, 341};
+int jnum[] = {1, 3, 5, 11, 21, 43, 85, 171, 341, 683, 1365, 2731, 5461, 10923, 21845, 43691, 87381, 174763, 349525};
 
 // Input / Argument handling
 void Vec::storeArgs(int argc, char **argv)
@@ -27,13 +27,16 @@ void Vec::storeArgs(int argc, char **argv)
 
 		this->pair.push_back(std::make_pair(std::vector<int>(), std::vector<int>()));
 
-		this->pair[j].first.push_back(a < b ? a : b);
-		this->pair[j].second.push_back(b > a ? b : a);
+		this->pair[j].first.push_back(a);
+		this->pair[j].second.push_back(b);
+		if (pair[j].first.back() > pair[j].second.back())
+			std::swap(pair[j].first, pair[j].second);
+		count++;
 	}
 	if (i != argc)
 	{
 		if ((a = std::stoi(argv[i])) < 0)
-			throw std::runtime_error("Only positve vales accepted.");
+			throw std::runtime_error("Only positve values accepted.");
 		this->unpaired.push_back(a);
 	}
 }
@@ -64,6 +67,7 @@ void Vec::recursivePairs(void)
 
 		if (p[i].first.back() > p[i].second.back())
 			std::swap(p[i].first, p[i].second);
+		count++;
 	}
 	for (;it != pair.end(); it++)
 	{
@@ -119,16 +123,13 @@ void Vec::insert(void)
 	std::cout << "-- After Splitting:" << std::endl;
 	printMP();
 
-	// if (pend.size() == 1)
-	// 	binSearch(0);
-	// else
-		jInsert();
+	jInsert();
 
 	std::cout << "-- After Insertion:" << std::endl;
+	pend.clear();
 	printMP();
 
 	size /= 2;
-	pend.clear();
 	insert();
 }
 
@@ -144,24 +145,26 @@ void Vec::binSearch(int e)
 	std::cout << "Pair Nr: "<< e << " | " << pend[e].first.back() << " " << pend[e].second << std::endl;
 
 	auto first = main.begin();
+	auto it2 = first;
+	int step;
+
 	while (range > 0)
 	{
-		it = first;
-		int step = range / 2;
-		std::advance(it, step);
-		if (pend[e].first.back() > it->back())
+		it2 = first;
+		step = range / 2;
+		std::advance(it2, step);
+		std::cout << it2->back() << std::endl;
+		if (pend[e].first.back() > it2->back())
 		{
-			first = ++it;
+			std::cout << "larger" << std::endl;
+			first = ++it2;
 			range -= step + 1;
 		}
 		else
 			range = step;
-		std::cout << it->back() << std::endl;
+		count++;
 	}
-	// if (pend[e].first.back() > it->back())
-	// 	main.insert(++it, pend[e].first);
-	// else
-		main.insert(it, pend[e].first);
+	main.insert(it2, pend[e].first);
 }
 
 
@@ -188,7 +191,7 @@ void Vec::jInsert(void)
 	{
 		std::vector<int> tmp(unpaired.begin(), std::next(unpaired.begin(), main[0].size()));
 		unpaired.erase(unpaired.begin(),  std::next(unpaired.begin(), main[0].size()));
-		pend.push_back(std::make_pair(tmp, -1));
+		pend.push_back(std::make_pair(tmp, main.back().back()+1));
 		binSearch(pend.size() -1);
 	}
 }
@@ -237,8 +240,8 @@ void Vec::printMP(void) const
 		std::cout << it << " ";
 	
 	std::cout << std::endl;
+	std::cout << "Count: " << count << std::endl;
 }
-
 
 
 
@@ -323,3 +326,4 @@ void Vec::print(void) const
 // 		smol = tmp;
 // 	}
 // }
+

@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 14:03:33 by timschmi          #+#    #+#             */
-/*   Updated: 2025/02/11 15:13:14 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/02/12 16:59:50 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ Notes:
 decide on Containers, prlly vector and list.
 what is the best way to nest pairs?
 	TUPLES? PAIRS? NESTED CONTAINERS?
+
+`jot -r 21 10 | tr '\n' ' '`
 
 Error handling for input
 
