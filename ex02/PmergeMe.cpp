@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/01 13:10:30 by timschmi          #+#    #+#             */
-/*   Updated: 2025/02/12 16:58:50 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/02/17 15:40:54 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void Vec::storeArgs(int argc, char **argv)
 	for (int j = 0; i+1 < argc; i+=2, j++)
 	{
 		if ((a = std::stoi(argv[i])) < 0 || (b = std::stoi(argv[i+1])) < 0)
-			throw std::runtime_error("Only positve vales accepted.");
+			throw std::runtime_error("Only positve values accepted.");
 
 		this->pair.push_back(std::make_pair(std::vector<int>(), std::vector<int>()));
 
@@ -181,18 +181,19 @@ void Vec::jInsert(void)
 		}
 		i++;
 	}
+	while (unpaired.size() >= main[0].size())
+	{
+		std::vector<int> tmp(unpaired.begin(), std::next(unpaired.begin(), main[0].size()));
+		unpaired.erase(unpaired.begin(),  std::next(unpaired.begin(), main[0].size()));
+		pend.push_back(std::make_pair(tmp, main.back().back()));
+		// binSearch(pend.size() -1);
+		size++;
+	}
 	while (size)
 	{
 		std::cout << "LEFTOVERS" << std::endl;
 		for (int b = pend.size() - 1; b != jnum[i-1] -2; b--, size--)
 			binSearch(b);
-	}
-	while (unpaired.size() >= main[0].size())
-	{
-		std::vector<int> tmp(unpaired.begin(), std::next(unpaired.begin(), main[0].size()));
-		unpaired.erase(unpaired.begin(),  std::next(unpaired.begin(), main[0].size()));
-		pend.push_back(std::make_pair(tmp, main.back().back()+1));
-		binSearch(pend.size() -1);
 	}
 }
 
@@ -242,8 +243,6 @@ void Vec::printMP(void) const
 	std::cout << std::endl;
 	std::cout << "Count: " << count << std::endl;
 }
-
-
 
 
 
