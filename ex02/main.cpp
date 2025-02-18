@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 14:03:33 by timschmi          #+#    #+#             */
-/*   Updated: 2025/02/12 16:59:50 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/02/18 17:48:47 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,13 @@ void firstContainer(int argc, char **argv)
 	Vec vec;
 
 	vec.storeArgs(argc, argv);
-	// vec.print();
+	auto start_time = std::chrono::high_resolution_clock::now();
 	vec.recursivePairs();
-	// vec.print();
 	vec.insert();
-	std::cout << "--- after ---" << std::endl;
 	vec.printMP();
+	auto end_time = std::chrono::high_resolution_clock::now();
+	auto elapsed = std::chrono::duration<double>(end_time - start_time);
+	std::cout << "Time: " <<  elapsed.count() << std::endl;
 
 }
 

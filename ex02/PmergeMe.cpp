@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/01 13:10:30 by timschmi          #+#    #+#             */
-/*   Updated: 2025/02/17 15:40:54 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/02/18 17:48:09 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,13 @@ void Vec::storeArgs(int argc, char **argv)
 
 void Vec::recursivePairs(void)
 {
-	if (pair.size() == 1)
-		return;
-
 	int i = 0;
+	auto it = pair.begin();
 	std::vector<std::pair<std::vector<int>, std::vector<int>>> p;
 	std::vector<int> up;
-	auto it = pair.begin();
+
+	if (pair.size() == 1)
+		return;
 
 	for (; it != pair.end() && std::next(it) != pair.end(); i++, it+=2)
 	{
@@ -87,9 +87,8 @@ void Vec::recursivePairs(void)
 
 void Vec::insert(void)
 {
-	static int size = this->pair.at(0).first.size();
+	static long unsigned int size = this->pair.at(0).first.size();
 	std::vector<std::vector<int>> mc;
-	std::cout << "Element Size: " << size << std::endl;
 
 	if (!size)
 		return;
@@ -102,7 +101,7 @@ void Vec::insert(void)
 			main.push_back(it.second);
 		}
 		size /= 2;
-		printMP();
+		// printMP();
 		insert();
 		return;
 	}
@@ -119,16 +118,8 @@ void Vec::insert(void)
 		mc.push_back(tmp2);
 	}
 	main = mc;
-
-	std::cout << "-- After Splitting:" << std::endl;
-	printMP();
-
 	jInsert();
-
-	std::cout << "-- After Insertion:" << std::endl;
 	pend.clear();
-	printMP();
-
 	size /= 2;
 	insert();
 }
@@ -138,25 +129,20 @@ void Vec::binSearch(int e)
 {
 	auto it = findPartner(e);
 	int range = std::distance(main.begin(), it);
-	if (range == 0)
-		throw std::runtime_error("Error in binSearch, invalid range");
-	std::cout << "Range: " << range << std::endl;
-
-	std::cout << "Pair Nr: "<< e << " | " << pend[e].first.back() << " " << pend[e].second << std::endl;
-
 	auto first = main.begin();
 	auto it2 = first;
 	int step;
+
+	if (range == 0)
+		throw std::runtime_error("Error in binSearch, invalid range");
 
 	while (range > 0)
 	{
 		it2 = first;
 		step = range / 2;
 		std::advance(it2, step);
-		std::cout << it2->back() << std::endl;
 		if (pend[e].first.back() > it2->back())
 		{
-			std::cout << "larger" << std::endl;
 			first = ++it2;
 			range -= step + 1;
 		}
@@ -172,13 +158,11 @@ void Vec::jInsert(void)
 {
 	int i  = 1;
 	int size = pend.size();
+
 	while (size >= jnum[i] - jnum[i-1])
 	{
 		for (int e = jnum[i] - 2; e >= jnum[i-1]-1; e--, size--)
-		{
-			std::cout << "e: " << e << std::endl;
 			binSearch(e);
-		}
 		i++;
 	}
 	while (unpaired.size() >= main[0].size())
@@ -186,12 +170,10 @@ void Vec::jInsert(void)
 		std::vector<int> tmp(unpaired.begin(), std::next(unpaired.begin(), main[0].size()));
 		unpaired.erase(unpaired.begin(),  std::next(unpaired.begin(), main[0].size()));
 		pend.push_back(std::make_pair(tmp, main.back().back()));
-		// binSearch(pend.size() -1);
 		size++;
 	}
 	while (size)
 	{
-		std::cout << "LEFTOVERS" << std::endl;
 		for (int b = pend.size() - 1; b != jnum[i-1] -2; b--, size--)
 			binSearch(b);
 	}
@@ -208,86 +190,6 @@ std::vector<std::vector<int>>::iterator Vec::findPartner(int e)
 	}
 	return(main.end());
 }
-
-
-
-
-
-
-
-
-
-void Vec::printMP(void) const
-{
-	std::cout << "Main:" << std::endl;
-	for (auto it : main)
-	{
-		for (auto it2 : it)
-			std::cout << it2 << " ";
-		std::cout << "| ";
-	}
-	std::cout << std::endl;
-	std::cout << "Pend:" << std::endl;
-	for (auto it : pend)
-	{
-		for (auto it2 : it.first)
-			std::cout << it2 << " ";
-		std::cout << "a: " << it.second;
-		std::cout << "| ";
-	}
-	std::cout << std::endl;
-	std::cout << "Unpaired: ";
-	for (auto it: unpaired)
-		std::cout << it << " ";
-	
-	std::cout << std::endl;
-	std::cout << "Count: " << count << std::endl;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // Utility
@@ -308,21 +210,29 @@ void Vec::print(void) const
 	std::cout << std::endl;
 }
 
-
-
-
-
-
-
-
-// void Pair::checkSort(void)
-// {
-// 	int tmp;
-// 	if (this->smol > big)
-// 	{
-// 		tmp = big;
-// 		big = smol;
-// 		smol = tmp;
-// 	}
-// }
-
+void Vec::printMP(void) const
+{
+	std::cout << "Main:" << std::endl;
+	for (auto it : main)
+	{
+		for (auto it2 : it)
+			std::cout << it2 << " ";
+		// std::cout << "| ";
+	}
+	std::cout << std::endl;
+	// std::cout << "Pend:" << std::endl;
+	// for (auto it : pend)
+	// {
+	// 	for (auto it2 : it.first)
+	// 		std::cout << it2 << " ";
+	// 	std::cout << "a: " << it.second;
+	// 	std::cout << "| ";
+	// }
+	// std::cout << std::endl;
+	// std::cout << "Unpaired: ";
+	// for (auto it: unpaired)
+	// 	std::cout << it << " ";
+	
+	// std::cout << std::endl;
+	std::cout << "Count: " << count << std::endl;
+}
