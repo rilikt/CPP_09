@@ -6,13 +6,11 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/01 13:10:30 by timschmi          #+#    #+#             */
-/*   Updated: 2025/02/18 17:48:09 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/03/04 15:40:00 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
-
-int jnum[] = {1, 3, 5, 11, 21, 43, 85, 171, 341, 683, 1365, 2731, 5461, 10923, 21845, 43691, 87381, 174763, 349525};
 
 // Input / Argument handling
 void Vec::storeArgs(int argc, char **argv)
@@ -101,7 +99,6 @@ void Vec::insert(void)
 			main.push_back(it.second);
 		}
 		size /= 2;
-		// printMP();
 		insert();
 		return;
 	}
