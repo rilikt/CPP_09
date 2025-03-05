@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 14:03:33 by timschmi          #+#    #+#             */
-/*   Updated: 2025/03/05 15:26:26 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/03/05 16:11:48 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,18 @@ Error handling for input
 void secondContainer(int argc, char **argv)
 {
 	Dq dq;
-
-	std::cout << "Second Container:" << std::endl;
-	auto start_time = std::chrono::high_resolution_clock::now();
-	storeArgs(dq.pair, dq.unpaired, argc, argv);
-	// dq.printPairs();
-	recursivePairs(dq.pair, dq.unpaired);
-	// dq.printPairs();
-	insert(dq.pair, dq.unpaired, dq.main, dq.pend);
-	dq.printMain();
-	auto end_time = std::chrono::high_resolution_clock::now();
-	auto elapsed = std::chrono::duration<double>(end_time - start_time);
-	std::cout << "Time: " <<  elapsed.count() << std::endl;
+	FordJohnson(dq, dq.unpaired, argc, argv);
+	// std::cout << "Second Container:" << std::endl;
+	// auto start_time = std::chrono::high_resolution_clock::now();
+	// storeArgs(dq.pair, dq.unpaired, argc, argv);
+	// // dq.printPairs();
+	// recursivePairs(dq.pair, dq.unpaired);
+	// // dq.printPairs();
+	// insert(dq.pair, dq.unpaired, dq.main, dq.pend);
+	// dq.printMain();
+	// auto end_time = std::chrono::high_resolution_clock::now();
+	// auto elapsed = std::chrono::duration<double>(end_time - start_time);
+	// std::cout << "Time: " <<  elapsed.count() << std::endl;
 
 
 }

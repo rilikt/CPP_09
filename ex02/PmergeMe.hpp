@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 14:03:15 by timschmi          #+#    #+#             */
-/*   Updated: 2025/03/05 15:22:56 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/03/05 16:25:13 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ class Dq
 {
 	private:
 	// int count = 0;
+		int argc;
+		char **argv;
 	
 	public:
 		std::deque<std::pair<std::deque<int>, std::deque<int>>> pair;
@@ -80,8 +82,15 @@ class Dq
 		std::deque<std::pair<std::deque<int>, std::deque<int>>>& getPair(void) {return pair;};
 		std::deque<int>& getUnpaired(void) {return unpaired;};
 
+		//Setters
+		void setArgs(int c, char **v) {argc = c, argv = v;};
+
 
 };
+
+
+template <typename Class, typename TestContainer, typename = std::enable_if_t<ContainerCheck<TestContainer>::value>>
+void FordJohnson(Class c, TestContainer &unpaired, int argc, char **argv);
 
 template <typename ContainerPair, typename ContainerUnPaired>
 void storeArgs(ContainerPair &pair, ContainerUnPaired &unpaired, int argc, char **argv);
@@ -100,6 +109,7 @@ void jInsert(Main &main, Pend &pend, Unpaired &unpaired);
 
 template <typename Pair, typename Unpaired, typename Main, typename Pend>
 void insert(Pair &pair, Unpaired &unpaired, Main &main, Pend &pend);
+
 
 
 
