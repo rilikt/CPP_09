@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   template.tpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: h4ns <h4ns@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 14:12:54 by timschmi          #+#    #+#             */
-/*   Updated: 2025/03/06 19:41:29 by h4ns             ###   ########.fr       */
+/*   Updated: 2025/03/07 16:40:10 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ void storeArgs(ContainerPair &pair, ContainerUnPaired &unpaired, int argc, char 
 		unpaired.push_back(a);
 	}
 }
-
 
 template <typename ContainerPair, typename ContainerUnPaired>
 void recursivePairs(ContainerPair &pair, ContainerUnPaired &unpaired)
@@ -92,20 +91,15 @@ void recursivePairs(ContainerPair &pair, ContainerUnPaired &unpaired)
 	recursivePairs(pair, unpaired);
 }
 
-
 template <typename Main, typename Pend>
 auto findPartner(int e, Main &main, Pend &pend)
 {
-	auto it = main.begin() + pend[e].second;
-	std::cout << "Index: " << pend[e].second << " " << "E: " << e << std::endl;
-	if (it != main.end() && pend[e].second < main.size())
-		return it;
-	// std::cout << pend[e].second << std::endl;
-	// for (auto it = main.begin(); it != main.end(); it++)
-	// {
-	// 	if (pend[e].second == it->back())
-	// 	return it;
-	// }
+	int size = main.size();
+	if (pend[e].second <= size)
+	{
+		auto it = main.begin() + pend[e].second;
+			return it;
+	}
 	return(main.end());
 }
 
@@ -121,7 +115,7 @@ void MainPend(std::deque<std::deque<int>> &main, std::deque<std::pair<std::deque
 	}
 	std::cout << std::endl << "Pend:" << std::endl;
 	for (auto e : pend)
-	{	
+	{
 		std::cout << "|";
 		for (auto n : e.first)
 			std::cout << n << " ";
@@ -130,35 +124,29 @@ void MainPend(std::deque<std::deque<int>> &main, std::deque<std::pair<std::deque
 	std::cout << std::endl;
 }
 
-void updateIndex(std::deque<std::pair<std::deque<int>, int>> &pend, int index, int e)
+template <typename Pend>
+void updateIndex(Pend &pend, int index)
 {
-	int size = pend.size();
-	int i = 0;
-	std::cout << "updating index, starting from: " << pend[e].second << std::endl;
-	while (i < size)
+	// int size = pend.size();
+	// int i = 0;
+	// while (i < size)
+	// {
+	// 	if (pend[i].second >= index)
+	// 		pend[i].second++;
+	// 	i++;
+	// }
+
+	auto it = pend.begin();
+	while (it != pend.end())
 	{
-		if (pend[i].second >= index)
-			pend[i].second++;
-		e++;
-		i++;
+		if (it->second >= index)
+			break;
+		it++;
 	}
-
-
-	// e++;
-	// auto it = pend.begin();
-	// while (it != pend.end())
-	// {
-	// 	if (it->second == index)
-	// 		break;
-	// 	it++;
-	// }
-	// if (it == pend.end())
-	// 	return;
-	// while (it != pend.end())
-	// {
-	// 	it->second++;
-	// 	it++;
-	// }
+	while (it != pend.end())
+	{
+		it++->second++;
+	}
 }
 
 template <typename Main, typename Pend>
@@ -188,7 +176,7 @@ void binSearch(int e, Main &main, Pend &pend)
 		// count++;
 	}
 	auto insit = main.insert(it2, pend[e].first);
-	updateIndex(pend, std::distance(main.begin(), insit), e);
+	updateIndex(pend, std::distance(main.begin(), insit));
 }
 
 template <typename Main, typename Pend, typename Unpaired>
@@ -200,29 +188,22 @@ void jInsert(Main &main, Pend &pend, Unpaired &unpaired)
 	while (size >= jnum[i] - jnum[i-1])
 	{
 		for (int e = jnum[i] - 2; e >= jnum[i-1]-1; e--, size--)
-		{
-			MainPend(main, pend);
 			binSearch(e, main, pend);
-		}
 		i++;
 	}
 	while (unpaired.size() >= main[0].size())
 	{
 		Unpaired tmp(unpaired.begin(), std::next(unpaired.begin(), main[0].size()));
 		unpaired.erase(unpaired.begin(),  std::next(unpaired.begin(), main[0].size()));
-		pend.push_back(std::make_pair(tmp, main.size()-1));
+		pend.push_back(std::make_pair(tmp, main.size()));
 		size++;
 	}
 	while (size)
 	{
 		for (int b = pend.size() - 1; b != jnum[i-1] -2; b--, size--)
-		{
-			MainPend(main, pend);
 			binSearch(b, main, pend);
-		}
 	}
 }
-
 
 template <typename Pair, typename Unpaired, typename Main, typename Pend>
 void insert(Pair &pair, Unpaired &unpaired, Main &main, Pend &pend)
@@ -242,7 +223,6 @@ void insert(Pair &pair, Unpaired &unpaired, Main &main, Pend &pend)
 		}
 		size /= 2;
 		insert(pair, unpaired, main, pend);
-		// MainPend(main, pend);
 		return;
 	}
 	
@@ -262,22 +242,36 @@ void insert(Pair &pair, Unpaired &unpaired, Main &main, Pend &pend)
 	jInsert(main, pend, unpaired);
 	pend.clear();
 	size /= 2;
-	MainPend(main, pend);
 	insert(pair, unpaired, main, pend);
+}
+
+template<typename Main>
+void checkicheck(Main &main)
+{
+	std::vector<int> vec;
+
+	for (auto e : main)
+	{
+		for (auto n : e)
+			vec.push_back(n);
+	}
+	if (std::is_sorted(vec.begin(), vec.end()))
+		std::cout << "Yippieeee!!!!" << std::endl;
+	else
+		std::cout << "Oh, nyoo:((((" << std::endl;
 }
 
 template<typename Class, typename TestContainer, typename>
 void FordJohnson(Class c, TestContainer &unpaired, int argc, char **argv)
 {
-	std::cout << "Second Container:" << std::endl;
+	std::cout << c.name << " Container:" << std::endl;
 	auto start_time = std::chrono::high_resolution_clock::now();
 	storeArgs(c.pair, unpaired, argc, argv);
-	// dq.printPairs();
 	recursivePairs(c.pair, unpaired);
-	c.printPairs();
 	insert(c.pair, unpaired, c.main, c.pend);
-	c.printMain();
 	auto end_time = std::chrono::high_resolution_clock::now();
 	auto elapsed = std::chrono::duration<double>(end_time - start_time);
+	c.printMain();
 	std::cout << "Time: " <<  elapsed.count() << std::endl;
+	checkicheck(c.main);
 }

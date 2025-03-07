@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 14:03:15 by timschmi          #+#    #+#             */
-/*   Updated: 2025/03/05 16:25:13 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/03/07 16:28:18 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ class Vec
 	std::vector<std::vector<int>>::iterator findPartner(int e);
 	
 	public:
+		std::string name = "First";
+
 		std::vector<std::pair<std::vector<int>, std::vector<int>>> pair;
 		std::vector<int> unpaired; //myb nested vector would be better
 		int count = 0;
@@ -52,7 +54,7 @@ class Vec
 		void recursivePairs(void);
 		//Printing
 		void print(void) const;
-		void printMP(void) const;
+		void printMain(void) const;
 		//Insertion
 		void insert(void);
 };
@@ -65,6 +67,8 @@ class Dq
 		char **argv;
 	
 	public:
+		std::string name = "Second";
+
 		std::deque<std::pair<std::deque<int>, std::deque<int>>> pair;
 		std::deque<int> unpaired;
 		std::deque<std::deque<int>> main;
@@ -139,7 +143,7 @@ void Dq::printMain(void) const
 	std::cout << std::endl;
 }
 
-void Vec::printMP(void) const
+void Vec::printMain(void) const
 {
 	std::cout << "Main:" << std::endl;
 	for (auto it : main)

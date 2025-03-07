@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: h4ns <h4ns@student.42.fr>                  +#+  +:+       +#+         #
+#    By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/09 15:31:31 by timschmi          #+#    #+#              #
-#    Updated: 2025/03/06 19:34:35 by h4ns             ###   ########.fr        #
+#    Updated: 2025/03/07 15:37:59 by timschmi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.cpp=.o))
 CC = c++
 
 NAME = pmerge
-CFLAGS = -std=c++17 -Ofast #-Wall -Werror -Wextra -fsanitize=address 
+CFLAGS = -std=c++17 -Ofast -Wall -Werror -Wextra -fsanitize=address 
 
 all: $(NAME)
 
