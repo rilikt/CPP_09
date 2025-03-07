@@ -3,28 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
+/*   By: h4ns <h4ns@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 14:03:33 by timschmi          #+#    #+#             */
-/*   Updated: 2025/03/05 16:11:48 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/03/06 13:02:12 by h4ns             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
-// #include "deque.cpp"
-// #include "temp.cpp"
 
 /*
 Notes:
-decide on Containers, prlly vector and list.
-what is the best way to nest pairs?
-	TUPLES? PAIRS? NESTED CONTAINERS?
-
 `jot -r 21 10 | tr '\n' ' '`
 
-Error handling for input
+Error handling for input:
+- allow duplicates?
 
 */
+
+
 // void firstContainer(int argc, char **argv)
 // {
 // 	Vec vec;
@@ -63,13 +60,21 @@ void secondContainer(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-	try
+	if (argc != 1)
 	{
-		// firstContainer(argc, argv);
-		secondContainer(argc, argv);
+		try
+		{
+			// firstContainer(argc, argv);
+			secondContainer(argc, argv);
+		}
+		catch (const std::exception &e)
+		{
+			std::cerr << "Exception caught: " << e.what() << std::endl;
+		}
 	}
-	catch (const std::exception &e)
+	else
 	{
-		std::cerr << "Exception caught: " << e.what() << std::endl;
+		std::cout << "Not enough arguments provided. Please enter a list of postive interger values to be sorted." << std::endl;
 	}
+	return(0);
 }
