@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 14:12:54 by timschmi          #+#    #+#             */
-/*   Updated: 2025/03/07 16:40:10 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/03/07 16:59:15 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void recursivePairs(ContainerPair &pair, ContainerUnPaired &unpaired)
 	ContainerUnPaired up;
 	
 	if (pair.size() == 1)
-	return;
+		return;
 	
 	for (; it != pair.end() && std::next(it) != pair.end(); i++, it+=2)
 	{
@@ -96,10 +96,7 @@ auto findPartner(int e, Main &main, Pend &pend)
 {
 	int size = main.size();
 	if (pend[e].second <= size)
-	{
-		auto it = main.begin() + pend[e].second;
-			return it;
-	}
+		return (main.begin() + pend[e].second);
 	return(main.end());
 }
 
@@ -159,7 +156,7 @@ void binSearch(int e, Main &main, Pend &pend)
 	int step;
 	
 	if (range == 0)
-	throw std::runtime_error("Error in binSearch, invalid range");
+		throw std::runtime_error("Error in binSearch, invalid range");
 	
 	while (range > 0)
 	{
@@ -176,7 +173,17 @@ void binSearch(int e, Main &main, Pend &pend)
 		// count++;
 	}
 	auto insit = main.insert(it2, pend[e].first);
-	updateIndex(pend, std::distance(main.begin(), insit));
+	int index = std::distance(main.begin(), insit);
+	auto ita = pend.begin();
+	while (ita != pend.end())
+	{
+		if (ita->second >= index)
+			break;
+		ita++;
+	}
+	while (ita != pend.end())
+		ita++->second++;
+	// updateIndex(pend, std::distance(main.begin(), insit));
 }
 
 template <typename Main, typename Pend, typename Unpaired>
@@ -212,7 +219,7 @@ void insert(Pair &pair, Unpaired &unpaired, Main &main, Pend &pend)
 	Main mc;
 	
 	if (!size)
-	return;
+		return;
 	
 	if (size == pair.at(0).first.size())
 	{

@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/01 13:10:30 by timschmi          #+#    #+#             */
-/*   Updated: 2025/03/04 15:40:00 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/03/07 17:01:11 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,22 +214,7 @@ void Vec::printMP(void) const
 	{
 		for (auto it2 : it)
 			std::cout << it2 << " ";
-		// std::cout << "| ";
 	}
 	std::cout << std::endl;
-	// std::cout << "Pend:" << std::endl;
-	// for (auto it : pend)
-	// {
-	// 	for (auto it2 : it.first)
-	// 		std::cout << it2 << " ";
-	// 	std::cout << "a: " << it.second;
-	// 	std::cout << "| ";
-	// }
-	// std::cout << std::endl;
-	// std::cout << "Unpaired: ";
-	// for (auto it: unpaired)
-	// 	std::cout << it << " ";
-	
-	// std::cout << std::endl;
 	std::cout << "Count: " << count << std::endl;
 }

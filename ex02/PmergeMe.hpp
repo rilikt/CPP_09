@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 14:03:15 by timschmi          #+#    #+#             */
-/*   Updated: 2025/03/07 16:28:18 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/03/07 17:01:48 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,6 @@ class Dq
 
 };
 
-
 template <typename Class, typename TestContainer, typename = std::enable_if_t<ContainerCheck<TestContainer>::value>>
 void FordJohnson(Class c, TestContainer &unpaired, int argc, char **argv);
 
@@ -117,8 +116,6 @@ void insert(Pair &pair, Unpaired &unpaired, Main &main, Pend &pend);
 
 
 
-
-
 void Dq::printPairs(void) const
 {
 	for (auto e : pair)
@@ -132,7 +129,6 @@ void Dq::printPairs(void) const
 	}
 }
 
-
 void Dq::printMain(void) const
 {
 	for(auto e : main)
@@ -145,27 +141,11 @@ void Dq::printMain(void) const
 
 void Vec::printMain(void) const
 {
-	std::cout << "Main:" << std::endl;
 	for (auto it : main)
 	{
 		for (auto it2 : it)
 			std::cout << it2 << " ";
-		// std::cout << "| ";
 	}
 	std::cout << std::endl;
-	// std::cout << "Pend:" << std::endl;
-	// for (auto it : pend)
-	// {
-	// 	for (auto it2 : it.first)
-	// 		std::cout << it2 << " ";
-	// 	std::cout << "a: " << it.second;
-	// 	std::cout << "| ";
-	// }
-	// std::cout << std::endl;
-	// std::cout << "Unpaired: ";
-	// for (auto it: unpaired)
-	// 	std::cout << it << " ";
-	
-	// std::cout << std::endl;
 	std::cout << "Count: " << count << std::endl;
 }
