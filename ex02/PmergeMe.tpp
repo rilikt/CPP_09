@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   template.tpp                                       :+:      :+:    :+:   */
+/*   PmergeMe.tpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 14:12:54 by timschmi          #+#    #+#             */
-/*   Updated: 2025/03/07 16:59:15 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/03/10 15:26:15 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,17 @@ std::is_same<std::decay_t<C> , std::deque<typename std::decay_t<C>::value_type>>
 std::is_same<std::decay_t<C> , std::vector<typename std::decay_t<C>::value_type>> 
 >
 {};
+
+template <typename Main>
+void printMain(Main &main)
+{
+	for (auto it : main)
+	{
+		for (auto it2 : it)
+			std::cout << it2 << " ";
+	}
+	std::cout << std::endl;
+}
 
 template <typename ContainerPair, typename ContainerUnPaired>
 void storeArgs(ContainerPair &pair, ContainerUnPaired &unpaired, int argc, char **argv)
@@ -100,40 +111,11 @@ auto findPartner(int e, Main &main, Pend &pend)
 	return(main.end());
 }
 
-void MainPend(std::deque<std::deque<int>> &main, std::deque<std::pair<std::deque<int>, int>> &pend)
-{
-	std::cout << "Main:" << std::endl;
-	int i = 0;
-	for (auto e : main)
-	{	std::cout << "|";
-		for (auto n : e)
-			std::cout << n << " ";
-		std::cout << "eNr: (" << i++ << ")| ";
-	}
-	std::cout << std::endl << "Pend:" << std::endl;
-	for (auto e : pend)
-	{
-		std::cout << "|";
-		for (auto n : e.first)
-			std::cout << n << " ";
-		std::cout << "Main index: (" << e.second << ")| ";
-	}
-	std::cout << std::endl;
-}
-
 template <typename Pend>
 void updateIndex(Pend &pend, int index)
 {
-	// int size = pend.size();
-	// int i = 0;
-	// while (i < size)
-	// {
-	// 	if (pend[i].second >= index)
-	// 		pend[i].second++;
-	// 	i++;
-	// }
-
 	auto it = pend.begin();
+
 	while (it != pend.end())
 	{
 		if (it->second >= index)
@@ -173,17 +155,7 @@ void binSearch(int e, Main &main, Pend &pend)
 		// count++;
 	}
 	auto insit = main.insert(it2, pend[e].first);
-	int index = std::distance(main.begin(), insit);
-	auto ita = pend.begin();
-	while (ita != pend.end())
-	{
-		if (ita->second >= index)
-			break;
-		ita++;
-	}
-	while (ita != pend.end())
-		ita++->second++;
-	// updateIndex(pend, std::distance(main.begin(), insit));
+	updateIndex(pend, std::distance(main.begin(), insit));
 }
 
 template <typename Main, typename Pend, typename Unpaired>
@@ -271,14 +243,18 @@ void checkicheck(Main &main)
 template<typename Class, typename TestContainer, typename>
 void FordJohnson(Class c, TestContainer &unpaired, int argc, char **argv)
 {
-	std::cout << c.name << " Container:" << std::endl;
+	auto &pair = c.getP();
+	auto &main = c.getM();
+	auto &pend = c.getPe();
+
+	std::cout << c.getName() << " Container:" << std::endl;
 	auto start_time = std::chrono::high_resolution_clock::now();
-	storeArgs(c.pair, unpaired, argc, argv);
-	recursivePairs(c.pair, unpaired);
-	insert(c.pair, unpaired, c.main, c.pend);
+	storeArgs(pair, unpaired, argc, argv);
+	recursivePairs(pair, unpaired);
+	insert(pair, unpaired, main, pend);
 	auto end_time = std::chrono::high_resolution_clock::now();
 	auto elapsed = std::chrono::duration<double>(end_time - start_time);
-	c.printMain();
+	printMain(main);
 	std::cout << "Time: " <<  elapsed.count() << std::endl;
-	checkicheck(c.main);
+	checkicheck(main);
 }

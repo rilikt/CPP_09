@@ -6,35 +6,30 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/31 14:03:33 by timschmi          #+#    #+#             */
-/*   Updated: 2025/03/07 16:40:29 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/03/10 15:24:22 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
+#include "Containers.hpp"
 
 /*
 Notes:
 `jot -r 21 10 | tr '\n' ' '`
-
-Error handling for input:
-- allow duplicates?
-
 */
-
 
 void firstContainer(int argc, char **argv)
 {
 	Vec vec;
 
-	FordJohnson(vec, vec.unpaired, argc, argv);
+	FordJohnson(vec, vec.getUP(), argc, argv);
 }
 
 void secondContainer(int argc, char **argv)
 {
 	Dq dq;
-	FordJohnson(dq, dq.unpaired, argc, argv);
+	FordJohnson(dq, dq.getUP(), argc, argv);
 }
-
 
 int main(int argc, char **argv)
 {
