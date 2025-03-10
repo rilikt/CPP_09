@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: h4ns <h4ns@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 09:43:58 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/30 11:12:46 by h4ns             ###   ########.fr       */
+/*   Updated: 2025/03/10 15:59:18 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,8 @@ void BitcoinExchange::findMatch()
 		}
 		else if (it->getYear() <= csv_it->getYear() && it->getMonth() <= csv_it->getMonth() && it->getDay() < csv_it->getDay())
 		{
-			it->setResult((csv_it -1)->getValue(), "calc");
+			auto temp = std::next(csv_it, -1);
+			it->setResult((temp)->getValue(), "calc");
 			it++;
 		}
 		else
@@ -266,9 +267,11 @@ bool customSort(const inData &a, const inData &b)
 void BitcoinExchange::sortInput()
 {
 	this->in_data_cpy = this->in_data;
-	std::sort(this->in_data_cpy.begin(), this->in_data_cpy.end(), customSort);
-	std::sort(this->csv.begin(), this->csv.end(), customSort);
 
+	this->in_data_cpy.sort(customSort);
+	this->csv.sort(customSort);
+	// std::sort(this->in_data_cpy.begin(), this->in_data_cpy.end(), customSort);
+	// std::sort(this->csv.begin(), this->csv.end(), customSort);
 }
 
 

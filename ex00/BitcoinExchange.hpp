@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BitcoinExchange.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: h4ns <h4ns@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 10:07:40 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/30 11:13:02 by h4ns             ###   ########.fr       */
+/*   Updated: 2025/03/10 15:49:18 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,9 @@
 #include <regex>
 #include <string>
 #include <cstring>
-#include <vector>
 #include <algorithm>
+#include <list>
+#include <iterator>
 
 class inData
 {
@@ -64,9 +65,9 @@ class inData
 class BitcoinExchange
 {
   private:
-	std::vector<inData> in_data;
-	std::vector<inData> in_data_cpy;
-	std::vector<inData> csv;
+	std::list<inData> in_data;
+	std::list<inData> in_data_cpy;
+	std::list<inData> csv;
 
   public:
 	//Con- Destructor
