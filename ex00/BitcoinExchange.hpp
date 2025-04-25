@@ -60,6 +60,9 @@ class inData
 	//checks
 	void	checkDate(std::string year_str, std::string month_str, std::string day_str);
 	void	checkValue(std::string value_str);
+	//operator
+	bool operator<(const inData &other) const;
+	bool operator==(const inData &other) const;
 };
 
 class BitcoinExchange

@@ -18,16 +18,17 @@ void BitcoinExchange::readInput(const char *str)
 	std::ifstream file(str);
 	std::string line;
 	int i = 0;
+	bool is_csv = (std::string(str) == "data.csv");
 
-	if(file.is_open())
-		while (std::getline(file, line))
-		{
-			if (!line.length())
-				continue;
-			!std::strcmp("data.csv", str) ? parseLine(line.data(), -1) : parseLine(line.data(), ++i);
-		}
-	else
+	if(!file.is_open())
 		throw std::runtime_error("Could not access file");
+
+	while (std::getline(file, line))
+	{
+		if (line.empty()) continue;
+		parseLine(line.data(), is_csv ? -1 : ++i);
+	}
+
 	file.close();
 }
 
@@ -36,27 +37,21 @@ void BitcoinExchange::findMatch()
 	auto it = this->in_data_cpy.begin();
 	auto csv_it = this->csv.begin();
 
-	while (it != this->in_data_cpy.end() && csv_it != this->csv.end())
+	while (it != this->in_data_cpy.end())
 	{
-		while (it != this->in_data_cpy.end() && it->isInvalid())
-			it++;
-		while (csv_it != this->csv.end() && it->getYear() > csv_it->getYear())
-			csv_it++;
-		while (csv_it != this->csv.end() && it->getYear() == csv_it->getYear() && it->getMonth() < csv_it->getMonth())
-			csv_it++;
-		if (it->getYear() == csv_it->getYear() && it->getMonth() == csv_it->getMonth() && it->getDay() == csv_it->getDay())
+		if (it->isInvalid())
 		{
+			it++;
+			continue;
+		}
+		
+		while (csv_it != this->csv.end() && *csv_it < *it)
+			csv_it++;
+		if (csv_it != this->csv.end() && *csv_it == *it)
 			it->setResult(csv_it->getValue(), "calc");
-			it++;
-		}
-		else if (it->getYear() <= csv_it->getYear() && it->getMonth() <= csv_it->getMonth() && it->getDay() < csv_it->getDay())
-		{
-			auto temp = std::next(csv_it, -1);
-			it->setResult((temp)->getValue(), "calc");
-			it++;
-		}
-		else
-			csv_it++;
+		else if (csv_it != this->csv.begin())
+			it->setResult(std::prev(csv_it)->getValue(), "calc");
+		it++;
 	}
 	setValue();
 }
@@ -162,13 +157,13 @@ void inData::checkDate(std::string year_str, std::string month_str, std::string 
 		max = 31;
 	else if (month == 2)
 	{
-		if (year % 4 == 0 || (year % 4 == 0 && (year % 100 == 0 && year % 400 == 0)))
+		if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0))
 				max = 29;
 		else
 			max = 28;
 	}
 	else
-		month = 30;
+		max = 30;
 	if (day < 1 || day > max)
 		setError("Day out of range (1 - " + std::to_string(max) + ")");
 
@@ -254,28 +249,25 @@ double inData::getValue(void) const
 
 
 //Sorting utility
-bool customSort(const inData &a, const inData &b)
-{
-	if (a.getYear() < b.getYear())
-		return true;
-	else if (a.getYear() == b.getYear() && a.getMonth() != b.getMonth())
-		return (a.getMonth() < b.getMonth());
-	else if (a.getYear() == b.getYear() && a.getMonth() == b.getMonth())
-		return (a.getDay() < b.getDay());
-	else
-		return false;
-}
-
 void BitcoinExchange::sortInput()
 {
 	this->in_data_cpy = this->in_data;
-
-	this->in_data_cpy.sort(customSort);
-	this->csv.sort(customSort);
-	// std::sort(this->in_data_cpy.begin(), this->in_data_cpy.end(), customSort);
-	// std::sort(this->csv.begin(), this->csv.end(), customSort);
+	
+	this->in_data_cpy.sort();
+	this->csv.sort();
 }
 
+bool inData::operator<(const inData &other) const
+{
+	if (year != other.year) return year < other.year;
+	if (month != other.month) return month < other.month;
+	return day < other.day;
+}
+
+bool inData::operator==(const inData &other) const
+{
+	return year == other.year && month == other.month && day == other.day;
+}
 
 
 //Printing
@@ -284,19 +276,19 @@ void BitcoinExchange::printContainer(int i) const
 	if (i == 1)
 	{
 		std::cout << "Printing Container in_data..." << std::endl;
-		for(auto &it: this->in_data)
+		for(const auto &it: this->in_data)
 			it.printValues();
 	}
 	else if (i == 2)
 	{
 		std::cout << "Printing Container csv..." << std::endl;
-		for(auto &it: this->csv)
+		for(const auto &it: this->csv)
 			it.printValues();
 	}
 	else
 	{
 		std::cout << "Printing Container in_data_cpy..." << std::endl;
-		for(auto &it: this->in_data_cpy)
+		for(const auto &it: this->in_data_cpy)
 			it.printValues();
 	}
 }
@@ -314,3 +306,4 @@ void inData::printValues(void) const
 		std::cout << this->day << " | " << std::defaultfloat << this->value << " => " << this->result << std::endl;	
 	}
 }
+
