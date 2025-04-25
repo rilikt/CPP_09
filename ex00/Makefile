@@ -17,7 +17,7 @@ OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.cpp=.o))
 CC = c++
 
 NAME = btc
-CFLAGS = -std=c++17 -Wall -Werror -Wextra #-fsanitize=address
+CFLAGS = -std=c++17 -Wall -Werror -Wextra -fsanitize=address
 
 all: $(NAME)
 

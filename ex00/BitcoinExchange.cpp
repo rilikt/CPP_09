@@ -38,11 +38,11 @@ void BitcoinExchange::findMatch()
 
 	while (it != this->in_data_cpy.end() && csv_it != this->csv.end())
 	{
-		while (it->isInvalid() && it != this->in_data_cpy.end())
+		while (it != this->in_data_cpy.end() && it->isInvalid())
 			it++;
-		while (it->getYear() > csv_it->getYear() && csv_it != this->csv.end())
+		while (csv_it != this->csv.end() && it->getYear() > csv_it->getYear())
 			csv_it++;
-		while (it->getYear() == csv_it->getYear() && it->getMonth() < csv_it->getMonth() && csv_it != this->csv.end())
+		while (csv_it != this->csv.end() && it->getYear() == csv_it->getYear() && it->getMonth() < csv_it->getMonth())
 			csv_it++;
 		if (it->getYear() == csv_it->getYear() && it->getMonth() == csv_it->getMonth() && it->getDay() == csv_it->getDay())
 		{
@@ -110,19 +110,21 @@ void BitcoinExchange::parseLine(char *str, int i)
 	std::regex date(R"((\d{4})-(\d{2})-(\d{2}))");
 	std::regex value(R"((\+?|-?)(\d+)|(\d*\.\d+)|(\d+\.\d*))");
 	std::cmatch lm;
-	std::cmatch dm;
-	std::cmatch vm;
+	std::smatch dm;
+	std::smatch vm;
 
 	if (std::regex_match(str, format))
 		return;
 	d.setInput(str, i);
 	if (std::regex_match(str, lm, line) || (i == -1 && std::regex_match(str, lm, csvline)))
 	{
-		if (std::regex_match(lm.str(1).data(), dm, date))
+		std::string date_val = lm.str(1);
+		std::string val_val = lm.str(2);
+		if (std::regex_match(date_val, dm, date))
 			d.checkDate(dm.str(1), dm.str(2), dm.str(3));
 		else
 			d.setError("Bad date format. Expected: YYYY-MM-DD");
-		if (std::regex_match(lm.str(2).data(), vm, value))
+		if (std::regex_match(val_val, vm, value))
 			d.checkValue(vm.str());
 		else
 			d.setError("Invalid btc ammount format (only int or double)");
