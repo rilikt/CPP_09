@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:33:23 by timschmi          #+#    #+#             */
-/*   Updated: 2025/04/27 13:10:47 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/04/27 15:56:11 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 class RPN
 {
 	private:
-	std::stack<std::string> stack;
+	std::stack<double> stack;
 
 	public:
 	//Con- Destructors

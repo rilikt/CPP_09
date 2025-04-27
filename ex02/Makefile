@@ -6,7 +6,7 @@
 #    By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/09 15:31:31 by timschmi          #+#    #+#              #
-#    Updated: 2025/03/10 14:47:55 by timschmi         ###   ########.fr        #
+#    Updated: 2025/04/27 13:49:47 by timschmi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.cpp=.o))
 CC = c++
 
 NAME = pmerge
-CFLAGS = -std=c++17 -Ofast -Wall -Werror -Wextra -fsanitize=address 
+CFLAGS = -std=c++17 -Wall -Werror -Wextra -Ofast
 
 all: $(NAME)
 

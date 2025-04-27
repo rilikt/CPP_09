@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 14:12:54 by timschmi          #+#    #+#             */
-/*   Updated: 2025/03/10 15:26:15 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/04/27 16:56:15 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,20 +39,19 @@ void storeArgs(ContainerPair &pair, ContainerUnPaired &unpaired, int argc, char 
 	for (int j = 0; i+1 < argc; i+=2, j++)
 	{
 		if ((a = std::stoi(argv[i])) < 0 || (b = std::stoi(argv[i+1])) < 0)
-		throw std::runtime_error("Only positve values accepted.");
+			throw std::runtime_error("Only positve values accepted.");
 		
 		pair.push_back(std::make_pair(ContainerUnPaired(), ContainerUnPaired()));
 		
 		pair[j].first.push_back(a);
 		pair[j].second.push_back(b);
 		if (pair[j].first.back() > pair[j].second.back())
-		std::swap(pair[j].first, pair[j].second);
-		// count++;
+			std::swap(pair[j].first, pair[j].second);
 	}
 	if (i != argc)
 	{
 		if ((a = std::stoi(argv[i])) < 0)
-		throw std::runtime_error("Only positve values accepted.");
+			throw std::runtime_error("Only positve values accepted.");
 		unpaired.push_back(a);
 	}
 }
@@ -73,27 +72,26 @@ void recursivePairs(ContainerPair &pair, ContainerUnPaired &unpaired)
 		p.push_back(std::make_pair(ContainerUnPaired(), ContainerUnPaired()));
 		
 		for (auto it2 : it->first)
-		p[i].first.push_back(it2);
+			p[i].first.push_back(it2);
 		for (auto it2 : it->second)
-		p[i].first.push_back(it2);
+			p[i].first.push_back(it2);
 		
 		for (auto it2 : std::next(it)->first)
-		p[i].second.push_back(it2);
+			p[i].second.push_back(it2);
 		for (auto it2 : std::next(it)->second)
-		p[i].second.push_back(it2);
+			p[i].second.push_back(it2);
 		
 		if (p[i].first.back() > p[i].second.back())
-		std::swap(p[i].first, p[i].second);
-		// count++;
+			std::swap(p[i].first, p[i].second);
 	}
 	for (;it != pair.end(); it++)
 	{
 		for (auto it2 : it->first)
-		up.push_back(it2);
+			up.push_back(it2);
 		for (auto it2 : it->second)
-		up.push_back(it2);
+			up.push_back(it2);
 		for (auto it2 : unpaired)
-		up.push_back(it2);
+			up.push_back(it2);
 		unpaired.clear();
 		unpaired = up;
 	}
@@ -151,8 +149,7 @@ void binSearch(int e, Main &main, Pend &pend)
 			range -= step + 1;
 		}
 		else
-		range = step;
-		// count++;
+			range = step;
 	}
 	auto insit = main.insert(it2, pend[e].first);
 	updateIndex(pend, std::distance(main.begin(), insit));
@@ -191,7 +188,11 @@ void insert(Pair &pair, Unpaired &unpaired, Main &main, Pend &pend)
 	Main mc;
 	
 	if (!size)
+	{
+		if (unpaired.size())
+			jInsert(main, pend, unpaired);
 		return;
+	}
 	
 	if (size == pair.at(0).first.size())
 	{
@@ -225,7 +226,7 @@ void insert(Pair &pair, Unpaired &unpaired, Main &main, Pend &pend)
 }
 
 template<typename Main>
-void checkicheck(Main &main)
+void checkicheck(Main &main, unsigned long argc)
 {
 	std::vector<int> vec;
 
@@ -234,10 +235,10 @@ void checkicheck(Main &main)
 		for (auto n : e)
 			vec.push_back(n);
 	}
-	if (std::is_sorted(vec.begin(), vec.end()))
-		std::cout << "Yippieeee!!!!" << std::endl;
+	if (std::is_sorted(vec.begin(), vec.end()) && vec.size() == argc -1)
+		return;
 	else
-		std::cout << "Oh, nyoo:((((" << std::endl;
+		exit (1);
 }
 
 template<typename Class, typename TestContainer, typename>
@@ -246,15 +247,25 @@ void FordJohnson(Class c, TestContainer &unpaired, int argc, char **argv)
 	auto &pair = c.getP();
 	auto &main = c.getM();
 	auto &pend = c.getPe();
+	std::string msg;
 
-	std::cout << c.getName() << " Container:" << std::endl;
 	auto start_time = std::chrono::high_resolution_clock::now();
 	storeArgs(pair, unpaired, argc, argv);
 	recursivePairs(pair, unpaired);
 	insert(pair, unpaired, main, pend);
 	auto end_time = std::chrono::high_resolution_clock::now();
 	auto elapsed = std::chrono::duration<double>(end_time - start_time);
-	printMain(main);
-	std::cout << "Time: " <<  elapsed.count() << std::endl;
-	checkicheck(main);
+	if (c.getName() == "First")
+	{
+		msg = "std::vector";
+		std::cout << "Before: ";
+		for (int i = 1; i < argc; i++)
+			std::cout << argv[i] << " ";
+		std::cout << std::endl << "After:  ";
+		printMain(main);
+	}
+	else
+		msg = "std:deque";
+	std::cout << "Time with " + msg + ": " <<  std::fixed << elapsed.count() << std::endl;
+	checkicheck(main, argc);
 }

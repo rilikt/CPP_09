@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:33:25 by timschmi          #+#    #+#             */
-/*   Updated: 2025/04/27 13:24:55 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/04/27 16:00:40 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void RPN::parseInput(std::string str)
 		if (it->str(2).length() || it->str(1).length() > 1)
 			throw std::runtime_error("Invalid input: '" + it->str() + "' only values up to 9 and '+ - / *' operators allowed.");
 		if (!opCheck(it->str(1)))
-			this->stack.push(it->str(1));
+			this->stack.push(std::stod(it->str(1)));
 		else
 		{
 			op = it->str(1);
@@ -47,7 +47,7 @@ double RPN::matchOperation(double *arr, std::string op)
 	{
 		if (arr[1] == 0)
 			throw std::runtime_error("Dividision by 0 not possible");
-		return(std::floor(arr[0] / arr[1]));
+		return(arr[0] / arr[1]);
 	}
 	else
 		throw std::runtime_error("Input invalid");
@@ -68,8 +68,8 @@ void RPN::doMath(std::string op)
 	if (this->stack.size() < 2)
 		throw std::runtime_error("Invalid operation");
 	for (int i = 1; i >= 0; i--, this->stack.pop())
-		arr[i] = std::stoi(this->stack.top());
-	this->stack.push(std::to_string(matchOperation(arr, op)));
+		arr[i] = (this->stack.top());
+	this->stack.push(matchOperation(arr, op));
 }
 
 //Printing
@@ -78,5 +78,5 @@ void RPN::printStack(void) const
 	if (this->stack.size() != 1)
 		throw std::runtime_error("Invalid operation, please check your input.");
 	else
-		std::cout << std::defaultfloat << std::stoi(this->stack.top()) << std::endl;
+		std::cout << std::defaultfloat << (this->stack.top()) << std::endl;
 }
