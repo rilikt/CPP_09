@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RPN.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: h4ns <h4ns@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 10:33:23 by timschmi          #+#    #+#             */
-/*   Updated: 2025/01/30 11:44:44 by h4ns             ###   ########.fr       */
+/*   Updated: 2025/04/27 13:10:47 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,15 @@
 #include <iostream>
 #include <string>
 #include <stack>
-#include <deque>
 #include <regex>
 #include <cctype>
+#include <cmath>
 #include <iomanip>
 
 class RPN
 {
 	private:
-	std::deque<std::string> queue;
+	std::stack<std::string> stack;
 
 	public:
 	//Con- Destructors
@@ -34,7 +34,7 @@ class RPN
 	//Input Parsing
 	void parseInput(std::string str);
 	//Print queue
-	void printQueue(void) const;
+	void printStack(void) const;
 	//Do math
 	void doMath(std::string op);
 	double matchOperation(double *arr, std::string op);

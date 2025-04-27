@@ -6,7 +6,7 @@
 #    By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/09 15:31:31 by timschmi          #+#    #+#              #
-#    Updated: 2025/01/28 10:33:21 by timschmi         ###   ########.fr        #
+#    Updated: 2025/04/27 12:25:18 by timschmi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.cpp=.o))
 CC = c++
 
 NAME = rpn
-CFLAGS = -std=c++17 -Wall -Werror -Wextra #-fsanitize=address
+CFLAGS = -std=c++17 -Wall -Werror -Wextra
 
 all: $(NAME)
 
