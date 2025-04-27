@@ -6,11 +6,15 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 09:43:58 by timschmi          #+#    #+#             */
-/*   Updated: 2025/03/10 15:59:18 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/04/27 12:21:00 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
+
+int min_year = 0;
+int min_month = 0;
+int min_day = 0;
 
 //Open file and read from it
 void BitcoinExchange::readInput(const char *str)
@@ -18,6 +22,7 @@ void BitcoinExchange::readInput(const char *str)
 	std::ifstream file(str);
 	std::string line;
 	int i = 0;
+	int j = 0;
 	bool is_csv = (std::string(str) == "data.csv");
 
 	if(!file.is_open())
@@ -26,7 +31,15 @@ void BitcoinExchange::readInput(const char *str)
 	while (std::getline(file, line))
 	{
 		if (line.empty()) continue;
-		parseLine(line.data(), is_csv ? -1 : ++i);
+		parseLine(line.data(), is_csv ? --j : ++i);
+	}
+	if (is_csv)
+	{
+		csv.sort();
+		auto it = csv.begin();
+		min_year = it->getYear();
+		min_month = it->getMonth();
+		min_day = it->getDay();
 	}
 
 	file.close();
@@ -99,28 +112,49 @@ double inData::getResult(void) const
 void BitcoinExchange::parseLine(char *str, int i)
 {
 	inData d;
+	static bool pipe = false;
+	static bool comma = false;
+	bool match= false;
 	std::regex format(R"((\s*(date)\s*\|\s*(value)\s*)|(\s*date\s*,\s*exchange_rate\s*))", std::regex_constants::icase);
-	std::regex line(R"(\s*(\d+-\d+-\d+)\s*\|\s*((\+?|-?)(\d*\.?\d*))\s*)");
-	std::regex csvline(R"(\s*(\d+-\d+-\d+)\s*,\s*((\+?|-?)(\d*\.?\d*))\s*)");
+	std::regex pipe_line(R"(\s*(\d+-\d+-\d+)\s*\|\s*((\+?|-?)(\d*\.?\d*))\s*)");
+	std::regex comma_line(R"(\s*(\d+-\d+-\d+)\s*,\s*((\+?|-?)(\d*\.?\d*))\s*)");
 	std::regex date(R"((\d{4})-(\d{2})-(\d{2}))");
 	std::regex value(R"((\+?|-?)(\d+)|(\d*\.\d+)|(\d+\.\d*))");
 	std::cmatch lm;
 	std::smatch dm;
 	std::smatch vm;
 
-	if (std::regex_match(str, format))
+	if ((i == -1 || i == 1) && std::regex_match(str, format))
+	{
+		if (std::strchr(str, '|'))
+		{
+			pipe = true;
+			comma = false;
+		}
+		else
+		{
+			comma = true;
+			pipe = false;
+		}
 		return;
+	}
 	d.setInput(str, i);
-	if (std::regex_match(str, lm, line) || (i == -1 && std::regex_match(str, lm, csvline)))
+
+	if (pipe)
+		match = std::regex_match(str, lm, pipe_line);
+	else if (comma)
+		match = std::regex_match(str, lm, comma_line);
+
+	if (match)
 	{
 		std::string date_val = lm.str(1);
 		std::string val_val = lm.str(2);
 		if (std::regex_match(date_val, dm, date))
-			d.checkDate(dm.str(1), dm.str(2), dm.str(3));
+			d.checkDate(dm.str(1), dm.str(2), dm.str(3), i);
 		else
 			d.setError("Bad date format. Expected: YYYY-MM-DD");
 		if (std::regex_match(val_val, vm, value))
-			d.checkValue(vm.str());
+			d.checkValue(vm.str(), i);
 		else
 			d.setError("Invalid btc ammount format (only int or double)");
 	}
@@ -128,28 +162,33 @@ void BitcoinExchange::parseLine(char *str, int i)
 		d.setError("Invalid input type. Expected: 'YYYY-MM-DD | btc ammount (int or double)'");
 	if (i >= 0)
 		addData(d, "in_data");
-	else
+	else if (!d.isInvalid())
 		addData(d, "csv");
+	else
+	{
+		d.printValues();
+		throw std::runtime_error("Invalid values ins .csv detected.");
+	}
 }
 
 
 
 //validate Data
-void inData::checkDate(std::string year_str, std::string month_str, std::string day_str)
+void inData::checkDate(std::string year_str, std::string month_str, std::string day_str, int i)
 {
 	int year = std::stoi(year_str);
 	int month = std::stoi(month_str);
 	int day = std::stoi(day_str);
 	int max = 31;
 	
-	if ((year > 2022 || (year == 2022 && (month > 3 || (month == 3 && day > 29)))) || (year < 2009 || (year == 2009 && month == 1 && day == 1)))
+	if (i >= 0 && ((year < min_year) || (year == min_year && month < min_month) || (year == min_year && month == min_month && day < min_day)))
 	{
 		setError("Date out of database range");
 		setDate(year, month, day);
 		return;
 	}
-	if (year < 2009 || year > 2022)
-		setError("Year outside of database (2009 - 2022)");
+	if (i >= 0 && (year < min_year))
+		setError("Year outside of database");
 	if (month < 1 || month > 12)
 		setError("Month out of range (1 - 12)");
 
@@ -170,11 +209,13 @@ void inData::checkDate(std::string year_str, std::string month_str, std::string 
 	setDate(year, month, day);
 }
 
-void inData::checkValue(std::string value_str)
+void inData::checkValue(std::string value_str, int i)
 {
 	double value = std::stod(value_str);
 
-	if (value > std::numeric_limits<int>::max())
+	if (i >= 0 && (value > std::numeric_limits<int>::max() || value > 1000))
+		setError("Too large number");
+	else if (i < 0 && value > std::numeric_limits<int>::max())
 		setError("Too large number");
 	else if (value < 0.0)
 		setError("Not a positive ammount");
@@ -220,7 +261,10 @@ void inData::setError(std::string msg)
 void inData::setInput(std::string input, int line)
 {
 	this->input = input;
-	this->line = line;
+	if (line < 0)
+		this->line = line * -1;
+	else
+		this->line = line;
 }
 
 
@@ -275,7 +319,7 @@ void BitcoinExchange::printContainer(int i) const
 {
 	if (i == 1)
 	{
-		std::cout << "Printing Container in_data..." << std::endl;
+		std::cout << "Printing Results..." << std::endl;
 		for(const auto &it: this->in_data)
 			it.printValues();
 	}

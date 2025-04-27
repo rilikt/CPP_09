@@ -6,7 +6,7 @@
 #    By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/09 15:31:31 by timschmi          #+#    #+#              #
-#    Updated: 2025/01/29 10:15:34 by timschmi         ###   ########.fr        #
+#    Updated: 2025/04/27 10:28:36 by timschmi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.cpp=.o))
 CC = c++
 
 NAME = btc
-CFLAGS = -std=c++17 -Wall -Werror -Wextra -Ofast #-fsanitize=address
+CFLAGS = -std=c++17 -Wall -Werror -Wextra
 
 all: $(NAME)
 

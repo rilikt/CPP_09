@@ -6,21 +6,11 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 09:43:56 by timschmi          #+#    #+#             */
-/*   Updated: 2025/03/10 16:03:01 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/04/27 10:54:16 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
-
-/*
-Notes:
-
--Dates are ordered in the .csv file
-	- so maybe using a orderd map with the date as key and populating it by date value(ascending)
-	- then keeping track what line we are in csv, to avoid reading through the entire document more than once
-
-
-*/
 
 int main(int argc, char **argv)
 {
@@ -30,8 +20,8 @@ int main(int argc, char **argv)
 		try
 		{
 			//Open, Read input file and given data.csv
-			btc.readInput(argv[1]);
 			btc.readInput("data.csv");
+			btc.readInput(argv[1]);
 			//Sort Copy of the container to compare with data.csv
 			btc.sortInput();
 			//Find closest date sum and calculate value

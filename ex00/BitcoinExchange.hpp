@@ -6,7 +6,7 @@
 /*   By: timschmi <timschmi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 10:07:40 by timschmi          #+#    #+#             */
-/*   Updated: 2025/03/10 15:49:18 by timschmi         ###   ########.fr       */
+/*   Updated: 2025/04/27 11:20:21 by timschmi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,10 @@
 #include <algorithm>
 #include <list>
 #include <iterator>
+
+extern int min_year;
+extern int min_month;
+extern int min_day;
 
 class inData
 {
@@ -58,8 +62,8 @@ class inData
 	//printer
 	void printValues(void) const;
 	//checks
-	void	checkDate(std::string year_str, std::string month_str, std::string day_str);
-	void	checkValue(std::string value_str);
+	void	checkDate(std::string year_str, std::string month_str, std::string day_str, int i);
+	void	checkValue(std::string value_str, int i);
 	//operator
 	bool operator<(const inData &other) const;
 	bool operator==(const inData &other) const;
